@@ -1,0 +1,14 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/GlobalStyles.uss?fileID=7433441132597879392&amp;guid=e0c3ee080cbe24d8aaf0c621ad1211c0&amp;type=3#GlobalStyles" />
+    <ui:VisualElement name="Page" class="Page" style="flex-grow: 1; justify-content: center;">
+        <ui:VisualElement name="Container" style="flex-grow: 0; width: 80%; align-self: center; border-top-left-radius: 15px; border-top-right-radius: 15px; border-bottom-right-radius: 15px; border-bottom-left-radius: 15px; background-color: rgb(255, 251, 150); border-top-width: 5px; border-right-width: 5px; border-bottom-width: 5px; border-left-width: 5px; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); height: 50%; justify-content: space-between;">
+            <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Message" style="font-size: 80px; -unity-font: url(&apos;project://database/Assets/UI/Quicksand-Bold.ttf?fileID=12800000&amp;guid=27fa21bd2f1ba4527b61daeb901e9520&amp;type=3#Quicksand-Bold&apos;); -unity-font-definition: initial; -unity-text-align: upper-center; margin-top: 20px; margin-right: 20px; margin-bottom: 20px; margin-left: 20px; white-space: normal;" />
+            <ui:VisualElement name="ButtonContainer" style="flex-direction: row; justify-content: center; margin-top: 20px; margin-right: 20px; margin-bottom: 20px; margin-left: 20px; flex-wrap: wrap;">
+                <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Button1" class="MyButton" style="font-size: 50px; width: 40%; margin-top: 15px; margin-right: 15px; margin-bottom: 15px; margin-left: 15px;" />
+                <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Button2" class="MyButton" style="font-size: 50px; width: 40%; margin-top: 15px; margin-right: 15px; margin-bottom: 15px; margin-left: 15px;" />
+                <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Button3" class="MyButton" style="font-size: 50px; width: 40%; margin-top: 15px; margin-right: 15px; margin-bottom: 15px; margin-left: 15px;" />
+                <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Button4" class="MyButton" style="font-size: 50px; width: 40%; margin-top: 15px; margin-right: 15px; margin-bottom: 15px; margin-left: 15px;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
