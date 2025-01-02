@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using System.Linq;
 using System;
+using DG.Tweening;
 
 public class GamePage : Page
 {
@@ -36,6 +37,8 @@ public class GamePage : Page
     private bool                    showFoundTiles      = false;
 
     private bool                    paused              = false;
+
+    private bool                    initialLoad         = true;
 
     private Action                  action_MainMenu     = delegate { PageManager.instance.StartCoroutine(PageManager.instance.OpenPageOnAnEmptyStack<MainMenuPage>()); };
     private Action                  action_CloseOverlay = delegate { PageManager.instance.StartCoroutine(PageManager.instance.CloseTopPage()); };
@@ -88,9 +91,10 @@ public class GamePage : Page
 
     public override void OnFocusReturnedToPage()
     {
-        canClick        = true;
+        canClick            = true;
 
-        Pause();
+        if (initialLoad)    InitialStart(); //initialLoad = false;
+        else                Pause();
     }
 
     #endregion
@@ -136,6 +140,8 @@ public class GamePage : Page
                 }
 
                 letterTiles.Add(tile);
+
+                tileVE.transform.scale = Vector3.zero;
             }
 
             VisualElement badge     = UIManager.instance.SolvedWordTile.Instantiate();
@@ -177,18 +183,18 @@ public class GamePage : Page
             timer.Hide();
         }
 
-        submitButton.clicked    += () => SubmitWord();
-        shuffleButton.clicked   += () => Shuffle();
-        clearButton.clicked     += () => ClearAll();
-        exitButton.clicked      += () => ExitLevel();
-        hideFoundButton.clicked += () => ShowHideFoundTiles();
+        submitButton.clicked        += () => SubmitWord();
+        shuffleButton.clicked       += () => Shuffle();
+        clearButton.clicked         += () => ClearAll();
+        exitButton.clicked          += () => ExitLevel();
+        hideFoundButton.clicked     += () => ShowHideFoundTiles();
 
-        themeLabel.text         = currentLevel.Theme;
+        themeLabel.text             = currentLevel.Theme;
 
         Shuffle();
 
-        if (dailyJumblie)
-            GameManager.instance.SetTime(timer);
+        //if (dailyJumblie)
+        //    GameManager.instance.SetTime(timer);
     }
 
     private void AddListeners()
@@ -201,6 +207,40 @@ public class GamePage : Page
     {
         this.RemoveObserver(AddTile, Notifications.LETTER_SELECTED);
         this.RemoveObserver(RemoveTile, Notifications.LETTER_UNSELECTED);
+    }
+
+    //This is used so the loading animation that is a different page
+    //covers the board for a few seconds before it is playable
+    private void InitialStart()
+    {
+        canClick = false;
+
+        Sequence s = DOTween.Sequence();
+
+        foreach (Tile t in letterTiles)
+        {
+            Tween w = DOTween.To
+                (
+                    () => t.Root.transform.scale,
+                    x => t.Root.transform.scale = x,
+                    new Vector3(1f, 1f, 1f),
+                    .2f
+                )
+                .SetEase(Ease.Linear)
+                .SetLoops(1);
+
+            s.Join(w);
+        }
+
+        s.Play().OnComplete(() =>
+                {
+                    if (dailyJumblie)
+                        GameManager.instance.SetTime(timer);
+
+                    initialLoad = false;
+                    canClick    = true;
+                }
+            );
     }
 
     private void AddTile(object sender, object info)
@@ -269,6 +309,7 @@ public class GamePage : Page
                 if (CurrentWord.Equals((string)badge.userData, StringComparison.OrdinalIgnoreCase))
                 {
                     badge.Show();
+                    PulseFoundWordBadge(badge);
                     break;
                 }
             }
@@ -318,6 +359,7 @@ public class GamePage : Page
         currentLevel.SecretWordFound = true;
 
         secretWordBadge.Show();
+        PulseFoundWordBadge(secretWordBadge);
 
         FinishLevel();
     }
@@ -331,12 +373,14 @@ public class GamePage : Page
 
         canClick        = false;
 
-        object[] args   = new object[5];
+        object[] args   = new object[7];
         args[0]         = "Are you sure you would like to exit the level?\n\nFound words will be saved";
         args[1]         = "Exit";
         args[2]         = "Play On";
         args[3]         = action_MainMenu;
         args[4]         = action_CloseOverlay;
+        args[5]         = null;
+        args[6]         = null;
 
         PageManager.instance.StartCoroutine(PageManager.instance.AddPageToStack<GameOverlayPage>(args));
     }
@@ -412,6 +456,17 @@ public class GamePage : Page
         }
 
         PageManager.instance.StartCoroutine(PageManager.instance.AddPageToStack<GameOverlayPage>(args));
+    }
+
+    private void PulseFoundWordBadge(VisualElement badge)
+    {
+        Tween pulse = DOTween.To(
+            () => badge.transform.scale,
+            x => badge.transform.scale = x,
+            new Vector3(1.2f, 1.2f, 1f), .2f)
+            .SetEase(Ease.InOutBounce)
+            .SetLoops(2, LoopType.Yoyo)
+            .Play();
     }
 
     #endregion

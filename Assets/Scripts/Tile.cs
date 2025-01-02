@@ -29,6 +29,8 @@ public class Tile
         set { found = value; }
     }
 
+    public VisualElement Root { get { return root; } }
+
     #endregion
 
     #region Constructor

@@ -110,7 +110,7 @@ public class PageManager : MonoBehaviour
         GOPages.Push(stack[stack.Count - 1] as GameObject);
         stack.RemoveAt(stack.Count - 1);
 
-        (stack.Cast<DictionaryEntry>().ElementAt(stack.Count -1).Key as Page).OnFocusReturnedToPage();
+        (stack.Cast<DictionaryEntry>().ElementAt(stack.Count - 1).Key as Page).OnFocusReturnedToPage();
     }
 
     public IEnumerator OpenPageOnAnEmptyStack<T>(object[] arfs = null, bool animateOut = true
@@ -176,6 +176,47 @@ public class PageManager : MonoBehaviour
         pageToAdd.SetSafeAreaMargins();
 
         if (animateIn) yield return pageToAdd.AnimateIn();
+    }
+
+    public void AddPageUnderTopPage<T>(object[] args = null, bool executeShowCall = true) where T : Page, new()
+    {
+        GameObject page             = GOPages.Pop();
+        page.transform.localScale   = Vector3.one;
+
+        T pageToAdd                 = new T();
+        UIDocument uiDocument       = page.GetComponent<UIDocument>();
+
+        string templateName         = typeof(T).ToString().Split("`")[0].Trim();
+        uiDocument.visualTreeAsset  = templates.Find(x => x.name == templateName);
+
+        Page topPage                = stack.Cast<DictionaryEntry>().ElementAt(stack.Count - 1).Key as Page;
+
+        pageToAdd.SetUIDoc(uiDocument);
+        stack.Insert(Mathf.Clamp(stack.Count - 2, 0, int.MaxValue), pageToAdd, page);
+
+        page.SetActive(true);
+
+        topPage.SetSortOrder(stack.Count);
+        pageToAdd.SetSortOrder(stack.Count - 1);
+
+        if (executeShowCall) pageToAdd.ShowPage(args);
+
+        pageToAdd.SetSafeAreaMargins();
+    }
+
+    public void CloseAllPagesUnderTop(object[] args = null, bool executeHideCalls = true)
+    {
+        for (int i = stack.Count - 2; i >= 0; i--)
+        {
+            Page p = stack.Cast<DictionaryEntry>().ElementAt(i).Key as Page;
+
+            if (executeHideCalls)
+                p.HidePage();
+
+            GOPages.Push((GameObject)stack[i]);
+
+            stack.RemoveAt(i);
+        }
     }
 
     public T GetFirstPageOfType<T>() where T : Page

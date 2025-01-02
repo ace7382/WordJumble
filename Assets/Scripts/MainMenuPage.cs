@@ -170,11 +170,17 @@ public class MainMenuPage : Page
 
         canClick        = false;
 
-        object[] args   = new object[2];
-        args[0]         = true;
-        args[1]         = dailyLevel;
+        //object[] args   = new object[2];
+        //args[0]         = true;
+        //args[1]         = dailyLevel;
 
-        PageManager.instance.StartCoroutine(PageManager.instance.OpenPageOnAnEmptyStack<GamePage>(args));
+        //PageManager.instance.StartCoroutine(PageManager.instance.OpenPageOnAnEmptyStack<GamePage>(args));
+
+        object[] args   = new object[2];
+        args[0]         = typeof(GamePage);
+        args[1]         = new object[2] { true, dailyLevel };
+
+        PageManager.instance.StartCoroutine(PageManager.instance.AddPageToStack<PageLoadAnimationPage>(args));
     }
 
     #endregion

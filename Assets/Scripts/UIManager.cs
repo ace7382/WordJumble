@@ -76,9 +76,10 @@ public class UIManager : MonoBehaviour
 
     #region Public Properties
 
-    public VisualTreeAsset LetterTile       { get { return letterTile; } }
-    public VisualTreeAsset SolvedWordTile   { get { return solvedWordTile; } }
-    public VisualTreeAsset LevelTile        { get { return levelTile; } }
+    public VisualTreeAsset  LetterTile          { get { return letterTile; } }
+    public VisualTreeAsset  SolvedWordTile      { get { return solvedWordTile; } }
+    public VisualTreeAsset  LevelTile           { get { return levelTile; } }
+    public int              WordColorMax        { get { return solvedWordColors.Count; } }
 
     #endregion
 
