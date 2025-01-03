@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using DG.Tweening;
 
 public class GameOverlayPage : Page
 {
@@ -21,16 +22,32 @@ public class GameOverlayPage : Page
 
     public override IEnumerator AnimateIn()
     {
+        uiDoc.rootVisualElement.transform.position = new Vector3(0f, Screen.height, 0f);
+
+        Tween slideIn = DOTween.To(
+                () => uiDoc.rootVisualElement.transform.position,
+                x => uiDoc.rootVisualElement.transform.position = x,
+                Vector3.zero,
+                .5f
+            );
+
+        yield return slideIn.Play().WaitForCompletion();
 
         canClick = true;
-        return null;
     }
 
     public override IEnumerator AnimateOut()
     {
         canClick = false;
 
-        return null;
+        Tween slideOut = DOTween.To(
+                () => uiDoc.rootVisualElement.transform.position,
+                x => uiDoc.rootVisualElement.transform.position = x,
+                new Vector3(0f, Screen.height, 0f),
+                .5f
+            );
+
+        yield return slideOut.Play().WaitForCompletion();
     }
 
     public override void HidePage()

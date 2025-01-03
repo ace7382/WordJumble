@@ -273,6 +273,9 @@ public class GamePage : Page
 
     private void SubmitWord()
     {
+        if (string.IsNullOrEmpty(CurrentWord))
+            return;
+
         int index = -1;
 
         for (int i = 0; i < currentLevel.Words.Count; i++)
@@ -315,17 +318,39 @@ public class GamePage : Page
             }
 
             currentLevel.WordFound(index);
+            ClearAll();
         }
         else 
         {
             if (CurrentWord.Equals(SecretWord, StringComparison.OrdinalIgnoreCase))
+            {
                 SecretWordFound();
+                ClearAll();
+            }
             else
-                incorrectGuesses.Add(CurrentWord);
+                IncorrectGuessSubmitted(CurrentWord);//incorrectGuesses.Add(CurrentWord);
         }
 
-        ClearAll();
+        //ClearAll();
         FinishLevel();
+    }
+
+    private void IncorrectGuessSubmitted(string word)
+    {
+        incorrectGuesses.Add(word);
+
+        canClick = false;
+
+        Tween shake = DOTween.Shake(
+                () => submittedWord.transform.position,
+                x => submittedWord.transform.position = x,
+                .4f,
+                new Vector3(20f, 0f, 0f),
+                15,
+                0,
+                true
+            ).Play()
+            .OnComplete(() => { canClick = true; ClearAll(); });
     }
 
     private void ClearAll()
