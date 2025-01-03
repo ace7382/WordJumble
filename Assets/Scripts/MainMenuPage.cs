@@ -55,8 +55,6 @@ public class MainMenuPage : Page
                         + DateTime.Now.Month.ToString() + "/"
                         + DateTime.Now.Day.ToString();
 
-        Debug.Log("Daily Level Path: " + path);
-
         dailyLevel  = Resources.Load<Level>(path);
 
         GameManager.instance.CurrentLevelCategory = LevelCategory.NULL;

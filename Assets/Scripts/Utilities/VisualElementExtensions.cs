@@ -115,6 +115,18 @@ public static class VisualElementExtensions
         if(bottomRight) value.style.borderBottomRightRadius   = r;
     }
 
+    public static void RegisterButtonStateVisualChanges(this VisualElement ve, VisualElement bg, Color neutralStateColor, bool useDefaultHighlight, Color highlightColor)
+    {
+        if (useDefaultHighlight)
+            highlightColor = new Color(.886f, .886f, .886f);
+
+        ve.RegisterCallback<PointerOverEvent>((_)   => { bg.style.backgroundColor = neutralStateColor * highlightColor; });
+        ve.RegisterCallback<PointerOutEvent>((_)    => { bg.style.backgroundColor = neutralStateColor; });
+        ve.RegisterCallback<PointerDownEvent>((_)   => { bg.transform.scale = new Vector3(.95f, .95f, 1f); });
+        ve.RegisterCallback<PointerUpEvent>((_)     => { bg.transform.scale = Vector3.one; });
+        ve.RegisterCallback<PointerLeaveEvent>((_)  => { bg.transform.scale = Vector3.one; });
+    }
+
     public static void ScaleToFit(this VisualElement ve)
     {
         ve.style.backgroundPositionX        = new BackgroundPosition(BackgroundPositionKeyword.Center);

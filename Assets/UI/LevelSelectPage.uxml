@@ -12,11 +12,11 @@
                 <ui:Label tabindex="-1" text="XX / XX" parse-escape-sequences="true" display-tooltip-when-elided="true" name="SecretWordCounter" style="font-size: 40px; -unity-font-style: bold;" />
             </ui:VisualElement>
         </ui:VisualElement>
-        <ui:Button text="Hide Completed" parse-escape-sequences="true" display-tooltip-when-elided="true" name="HideCompletedButton" class="MyButton" style="font-size: 30px; width: 300px; margin-top: 20px; margin-right: 20px; margin-bottom: 20px; margin-left: 20px;" />
+        <ui:Label tabindex="-1" text="Hide Completed" parse-escape-sequences="true" display-tooltip-when-elided="true" name="HideCompletedButton" class="MyButton" style="width: 300px; margin-top: 20px; margin-right: 20px; margin-bottom: 20px; margin-left: 20px; padding-top: 10px; padding-right: 12px; padding-bottom: 10px; padding-left: 12px; font-size: 30px;" />
         <ui:VisualElement name="DividerLine" style="flex-grow: 0; flex-shrink: 0; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-bottom-width: 10px; max-width: 65%; align-self: center; min-width: 65%; width: 65%;" />
         <ui:ScrollView name="LevelIconContainer" touch-scroll-type="Clamped" vertical-scroller-visibility="Hidden" horizontal-scroller-visibility="Hidden" style="flex-grow: 1; flex-direction: row; flex-wrap: wrap; margin-top: 20px; margin-right: 20px; margin-bottom: 20px; margin-left: 20px;" />
         <ui:VisualElement name="Footer" style="flex-grow: 0; flex-shrink: 0; flex-direction: row; justify-content: space-around;">
-            <ui:Button text="Back" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BackButton" class="MyButton" style="font-size: 40px; width: 200px; margin-top: 40px; margin-right: 40px; margin-bottom: 40px; margin-left: 40px;" />
+            <ui:Label tabindex="-1" text="Back" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BackButton" class="MyButton" style="width: 200px; margin-top: 40px; margin-right: 40px; margin-bottom: 40px; margin-left: 40px; padding-top: 10px; padding-right: 12px; padding-bottom: 10px; padding-left: 12px; font-size: 40px;" />
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

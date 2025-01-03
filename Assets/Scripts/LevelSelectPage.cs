@@ -17,8 +17,8 @@ public class LevelSelectPage : Page
     private VisualElement   levelIconContainer;
     private Label           completeCounter;
     private Label           secretCounter;
-    private Button          backButton;
-    private Button          hideCompletedButton;
+    private Label           backButton;
+    private Label           hideCompletedButton;
 
     #endregion
 
@@ -66,8 +66,8 @@ public class LevelSelectPage : Page
         levelIconContainer  = uiDoc.rootVisualElement.Q<ScrollView>(UIManager.LEVEL_SELECT_PAGE__ICON_CONTAINER_NAME).contentContainer;
         completeCounter     = uiDoc.rootVisualElement.Q<Label>(UIManager.LEVEL_SELECT_PAGE__COMPLETE_COUNTER_NAME);
         secretCounter       = uiDoc.rootVisualElement.Q<Label>(UIManager.LEVEL_SELECT_PAGE__SECRET_COUNTER_NAME);
-        backButton          = uiDoc.rootVisualElement.Q<Button>(UIManager.LEVEL_SELECT_PAGE__BACK_BUTTON_NAME);
-        hideCompletedButton = uiDoc.rootVisualElement.Q<Button>(UIManager.LEVEL_SELECT_PAGE__HIDE_COMP_BUTTON_NAME);
+        backButton          = uiDoc.rootVisualElement.Q<Label>(UIManager.LEVEL_SELECT_PAGE__BACK_BUTTON_NAME);
+        hideCompletedButton = uiDoc.rootVisualElement.Q<Label>(UIManager.LEVEL_SELECT_PAGE__HIDE_COMP_BUTTON_NAME);
 
         titleLabel.text     = levelCat.Name();
 
@@ -148,6 +148,7 @@ public class LevelSelectPage : Page
             secretCounter.text          = secretCount.ToString() + " / " + levels.Count.ToString();
 
             levelButton.RegisterCallback<ClickEvent>((_) => LoadLevel(_, level));
+            levelButton.RegisterButtonStateVisualChanges(levelButton.ElementAt(0), Color.white, true, Color.white);
 
             levelIconContainer.Add(levelButton);
         }
@@ -155,14 +156,17 @@ public class LevelSelectPage : Page
 
     private void RegisterCallbacksAndEvents()
     {
-        backButton.clicked          += () => ReturnToMainMenu();
-        hideCompletedButton.clicked += () => ShowHideCompleted();
+        backButton.RegisterCallback<ClickEvent>((_) => ReturnToMainMenu());
+        hideCompletedButton.RegisterCallback<ClickEvent>((_) => ShowHideCompleted());
+
+        backButton.RegisterButtonStateVisualChanges(backButton, Color.black, false, Color.white);
+        hideCompletedButton.RegisterButtonStateVisualChanges(hideCompletedButton, Color.black, false, Color.white);
     }
 
     private void UnregisterCallbacksAndEvents()
     {
-        backButton.clicked          -= () => ReturnToMainMenu();
-        hideCompletedButton.clicked -= () => ShowHideCompleted();
+        backButton.UnregisterCallback<ClickEvent>((_) => ReturnToMainMenu());
+        hideCompletedButton.UnregisterCallback<ClickEvent>((_) => ShowHideCompleted());
     }
 
     private void LoadLevel(ClickEvent _, Level level)
@@ -172,11 +176,11 @@ public class LevelSelectPage : Page
 
         canClick        = false;
 
-        object[] args   = new object[2];
-        args[0]         = false;
-        args[1]         = level;
+        object[] args = new object[2];
+        args[0]         = typeof(GamePage);
+        args[1]         = new object[2] { false, level };
 
-        PageManager.instance.StartCoroutine(PageManager.instance.OpenPageOnAnEmptyStack<GamePage>(args));
+        PageManager.instance.StartCoroutine(PageManager.instance.AddPageToStack<PageLoadAnimationPage>(args));
     }
 
     private void ReturnToMainMenu()

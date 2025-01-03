@@ -158,6 +158,8 @@ public class GamePage : Page
 
             badge.Show(currentLevel.FoundWords[i]);
 
+            badge.transform.scale   = Vector3.zero;
+
             foundWordContainer.Add(badge);
             solutionWordBadges.Add(badge);
         }
@@ -176,6 +178,9 @@ public class GamePage : Page
             secretWordBadge.Q<Label>(UIManager.SOVLED_WORD__LENGTH_INDICATOR_NAME)
                 .text               = UIManager.WORD_LENGTH_INDICATOR_SYMBOL.ToString() + " Secret Word " + UIManager.WORD_LENGTH_INDICATOR_SYMBOL.ToString();
 
+            secretWordBadge
+                .transform.scale    = Vector3.zero;
+            
             secretWordBadge.Show(currentLevel.SecretWordFound);
             foundWordContainer.Add(secretWordBadge);
             ////////
@@ -192,9 +197,7 @@ public class GamePage : Page
         themeLabel.text             = currentLevel.Theme;
 
         Shuffle();
-
-        //if (dailyJumblie)
-        //    GameManager.instance.SetTime(timer);
+        ShowHideFoundTiles();
     }
 
     private void AddListeners()
@@ -231,6 +234,33 @@ public class GamePage : Page
 
             s.Join(w);
         }
+
+        foreach (VisualElement badge in solutionWordBadges)
+        {
+            Tween w = DOTween.To
+                (
+                    () => badge.transform.scale,
+                    x => badge.transform.scale = x,
+                    new Vector3(1f, 1f, 1f),
+                    .2f
+                )
+                .SetEase(Ease.Linear)
+                .SetLoops(1);
+
+            s.Join(w);
+        }
+
+        Tween secret = DOTween.To
+        (
+            () => secretWordBadge.transform.scale,
+            x => secretWordBadge.transform.scale = x,
+            new Vector3(1f, 1f, 1f),
+            .2f
+        )
+        .SetEase(Ease.Linear)
+        .SetLoops(1);
+
+        s.Join(secret);
 
         s.Play().OnComplete(() =>
                 {
@@ -312,7 +342,7 @@ public class GamePage : Page
                 if (CurrentWord.Equals((string)badge.userData, StringComparison.OrdinalIgnoreCase))
                 {
                     badge.Show();
-                    PulseFoundWordBadge(badge);
+                    PulseFoundWordBadge(badge).Play().OnComplete(() => { FinishLevel(); });
                     break;
                 }
             }
@@ -332,7 +362,7 @@ public class GamePage : Page
         }
 
         //ClearAll();
-        FinishLevel();
+        //FinishLevel();
     }
 
     private void IncorrectGuessSubmitted(string word)
@@ -384,9 +414,9 @@ public class GamePage : Page
         currentLevel.SecretWordFound = true;
 
         secretWordBadge.Show();
-        PulseFoundWordBadge(secretWordBadge);
+        PulseFoundWordBadge(secretWordBadge).Play().OnComplete(() => { FinishLevel(); }); ;
 
-        FinishLevel();
+        //FinishLevel();
     }
 
     private void ExitLevel()
@@ -460,11 +490,18 @@ public class GamePage : Page
         args[3]         = action_MainMenu;
 
         Action openNext = delegate {
-                            object[] args   = new object[2];
-                            args[0]         = false;
-                            args[1]         = nextLevel;
+                            //object[] args   = new object[2];
+                            //args[0]         = false;
+                            //args[1]         = nextLevel;
 
-                            PageManager.instance.StartCoroutine(PageManager.instance.OpenPageOnAnEmptyStack<GamePage>(args));
+                            //PageManager.instance.StartCoroutine(PageManager.instance.OpenPageOnAnEmptyStack<GamePage>(args));
+
+                            object[] args   = new object[2];
+                            args[0]         = typeof(GamePage);
+                            args[1]         = new object[2] { false, nextLevel };
+
+                            PageManager.instance.StartCoroutine(PageManager.instance.AddPageToStack<PageLoadAnimationPage>(args));
+
                         };
 
         args[4]         = openNext;
@@ -483,15 +520,17 @@ public class GamePage : Page
         PageManager.instance.StartCoroutine(PageManager.instance.AddPageToStack<GameOverlayPage>(args));
     }
 
-    private void PulseFoundWordBadge(VisualElement badge)
+    private Tween PulseFoundWordBadge(VisualElement badge)
     {
         Tween pulse = DOTween.To(
             () => badge.transform.scale,
             x => badge.transform.scale = x,
             new Vector3(1.2f, 1.2f, 1f), .2f)
             .SetEase(Ease.InOutBounce)
-            .SetLoops(2, LoopType.Yoyo)
-            .Play();
+            .SetLoops(2, LoopType.Yoyo);
+            //.Play();
+
+        return pulse;
     }
 
     #endregion
