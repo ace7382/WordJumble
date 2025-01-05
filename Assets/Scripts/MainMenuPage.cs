@@ -128,6 +128,8 @@ public class MainMenuPage : Page
 
         levelButton.RegisterCallback<ClickEvent>((_) => OpenDailyLevel(_));
 
+        levelButton.RegisterButtonStateVisualChanges(levelButton.ElementAt(0), Color.white, true, Color.white);
+
         dailyLevelButtonContainer.Add(levelButton);
         /////////////
     }

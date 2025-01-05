@@ -16,12 +16,12 @@ public class GamePage : Page
     private VisualElement           foundWordContainer;
     private Label                   submittedWord;
     private Label                   themeLabel;
-    private Button                  submitButton;
-    private Button                  shuffleButton;
-    private Button                  clearButton;
+    private Label                   submitButton;
+    private Label                   shuffleButton;
+    private Label                   clearButton;
     private Button                  timer;
-    private Button                  exitButton;
-    private Button                  hideFoundButton;
+    private VisualElement           exitButton;
+    private Label                   hideFoundButton;
 
     private List<Tile>              letterTiles;
     private List<Tile>              selectedTiles;
@@ -109,12 +109,12 @@ public class GamePage : Page
         submittedWord       = uiDoc.rootVisualElement.Q<Label>(UIManager.GAME_PAGE__SUBMITTED_WORD_NAME);
         themeLabel          = uiDoc.rootVisualElement.Q<Label>(UIManager.GAME_PAGE__THEME_LABEL_NAME);
 
-        submitButton        = uiDoc.rootVisualElement.Q<Button>(UIManager.GAME_PAGE__SUBMIT_BUTTON_NAME);
-        shuffleButton       = uiDoc.rootVisualElement.Q<Button>(UIManager.GAME_PAGE__SHUFFLE_BUTTON_NAME);
-        clearButton         = uiDoc.rootVisualElement.Q<Button>(UIManager.GAME_PAGE__CLEAR_BUTTON_NAME);
-        exitButton          = uiDoc.rootVisualElement.Q<Button>(UIManager.GAME_PAGE__EXIT_BUTTON_NAME);
+        submitButton        = uiDoc.rootVisualElement.Q<Label>(UIManager.GAME_PAGE__SUBMIT_BUTTON_NAME);
+        shuffleButton       = uiDoc.rootVisualElement.Q<Label>(UIManager.GAME_PAGE__SHUFFLE_BUTTON_NAME);
+        clearButton         = uiDoc.rootVisualElement.Q<Label>(UIManager.GAME_PAGE__CLEAR_BUTTON_NAME);
+        exitButton          = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.GAME_PAGE__EXIT_BUTTON_NAME);
         timer               = uiDoc.rootVisualElement.Q<Button>(UIManager.GAME_PAGE__TIMER_NAME);
-        hideFoundButton     = uiDoc.rootVisualElement.Q<Button>(UIManager.GAME_PAGE__HIDE_FOUND_BUTTON_NAME);
+        hideFoundButton     = uiDoc.rootVisualElement.Q<Label>(UIManager.GAME_PAGE__HIDE_FOUND_BUTTON_NAME);
 
         letterTiles         = new List<Tile>();
         selectedTiles       = new List<Tile>();
@@ -188,13 +188,19 @@ public class GamePage : Page
             timer.Hide();
         }
 
-        submitButton.clicked        += () => SubmitWord();
-        shuffleButton.clicked       += () => Shuffle();
-        clearButton.clicked         += () => ClearAll();
-        exitButton.clicked          += () => ExitLevel();
-        hideFoundButton.clicked     += () => ShowHideFoundTiles();
-
         themeLabel.text             = currentLevel.Theme;
+
+        exitButton.RegisterCallback<ClickEvent>((_) => ExitLevel());
+        submitButton.RegisterCallback<ClickEvent>((_) => SubmitWord());
+        clearButton.RegisterCallback<ClickEvent>((_) => ClearAll());
+        shuffleButton.RegisterCallback<ClickEvent>((_) => Shuffle());
+        hideFoundButton.RegisterCallback<ClickEvent>((_) => ShowHideFoundTiles());
+
+        exitButton.RegisterButtonStateVisualChanges(exitButton, Color.black, true, Color.white);
+        submitButton.RegisterButtonStateVisualChanges(submitButton, Color.black, true, Color.white);
+        clearButton.RegisterButtonStateVisualChanges(clearButton, Color.black, true, Color.white);
+        shuffleButton.RegisterButtonStateVisualChanges(shuffleButton, Color.black, true, Color.white);
+        hideFoundButton.RegisterButtonStateVisualChanges(hideFoundButton, Color.black, true, Color.white);
 
         Shuffle();
         ShowHideFoundTiles();
@@ -250,17 +256,20 @@ public class GamePage : Page
             s.Join(w);
         }
 
-        Tween secret = DOTween.To
-        (
-            () => secretWordBadge.transform.scale,
-            x => secretWordBadge.transform.scale = x,
-            new Vector3(1f, 1f, 1f),
-            .2f
-        )
-        .SetEase(Ease.Linear)
-        .SetLoops(1);
+        if (!dailyJumblie)
+        {
+            Tween secret = DOTween.To
+            (
+                () => secretWordBadge.transform.scale,
+                x => secretWordBadge.transform.scale = x,
+                new Vector3(1f, 1f, 1f),
+                .2f
+            )
+            .SetEase(Ease.Linear)
+            .SetLoops(1);
 
-        s.Join(secret);
+            s.Join(secret);
+        }
 
         s.Play().OnComplete(() =>
                 {
