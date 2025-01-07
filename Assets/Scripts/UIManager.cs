@@ -20,6 +20,7 @@ public class UIManager : MonoBehaviour
     public const string MAIN_MENU_PAGE__5_WORDS_BUTTON_NAME         = "FiveWordButton";
     public const string MAIN_MENU_PAGE__6_WORDS_BUTTON_NAME         = "SixWordButton";
     public const string MAIN_MENU_PAGE__DAILY_LABEL_NAME            = "DailyLabel";
+    public const string MAIN_MENU_PAGE__LOADING_LABEL_NAME          = "LoadingLabel";
 
     public const string LEVEL_SELECT_PAGE__TITLE_NAME               = "Title";
     public const string LEVEL_SELECT_PAGE__ICON_CONTAINER_NAME      = "LevelIconContainer";

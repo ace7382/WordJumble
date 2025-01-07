@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public enum LevelCategory
 {
@@ -37,6 +38,22 @@ public class Level : ScriptableObject
     public bool             SecretWordFound { get { return secretWordFound; } set { secretWordFound = value; } }
     public List<bool>       FoundWords      { get { return foundWords; } }
     public bool             Complete        { get { return complete; } set { complete = value; } }
+
+    #endregion
+
+    #region "Constructor"
+
+    public void SetupLevel(string theme, List<string> words)
+    {
+        this.theme      = theme;
+        this.words      = words;
+
+        levelNumber     = 0;
+        secretWord      = "";
+        secretWordFound = false;
+        foundWords      = Enumerable.Repeat(false, this.words.Count).ToList();
+        complete        = false;
+    }
 
     #endregion
 

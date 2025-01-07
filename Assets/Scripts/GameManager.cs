@@ -18,10 +18,10 @@ public class GameManager : MonoBehaviour
 
     #region Private Variables
 
-    private float           time;
-    private Button          timerButton;
-    private bool            paused          = false;
-    private LevelCategory   currentCategory;
+    private float               time;
+    private Button              timerButton;
+    private bool                paused              = false;
+    private LevelCategory       currentCategory;
 
     #endregion
 
