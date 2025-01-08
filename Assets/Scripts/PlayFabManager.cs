@@ -22,13 +22,15 @@ public class PlayFabManager : MonoBehaviour
     #region Private Variables
 
     private DateTime    serverDate;
-    private Level       dailyLevel  = null;
+    //private Level       dailyLevel  = null;
+    private NewLevel    dailyLevel = null;
 
     #endregion
 
     #region Public Properties
 
-    public Level        DailyLevel  { get { return dailyLevel; } }
+    //public Level        DailyLevel  { get { return dailyLevel; } }
+    public NewLevel     DailyLevel  { get { return dailyLevel; } }
     public DateTime     ServerDate  { get { return serverDate; } }
 
     #endregion
@@ -100,12 +102,15 @@ public class PlayFabManager : MonoBehaviour
         string jsonString       = result.Data[serverDate.ToString("yyyy_MM_dd")];
 
         LevelData l             = JsonUtility.FromJson<LevelData>(jsonString);
-        dailyLevel              = ScriptableObject.CreateInstance<Level>();
-        dailyLevel.SetupLevel(l.theme, l.words);
 
-        Debug.Log("Theme: " + DailyLevel.Theme);
-        Debug.Log("Total Word Count: " + DailyLevel.Words.Count);
-        Debug.Log("Found Word array Count: " + DailyLevel.FoundWords.Count);
+        //dailyLevel              = ScriptableObject.CreateInstance<Level>();
+        //dailyLevel.SetupLevel(l.theme, l.words);
+
+        dailyLevel              = new NewLevel(LevelCategory.DAILY, l.theme, -1, l.words, "");
+
+        //Debug.Log("Theme: " + DailyLevel.Theme);
+        //Debug.Log("Total Word Count: " + DailyLevel.Words.Count);
+        //Debug.Log("Found Word array Count: " + DailyLevel.FoundWords.Count);
 
         this.PostNotification(Notifications.DAILY_PUZZLE_LOADED_FROM_SERVER);
     }

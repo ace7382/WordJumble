@@ -12,7 +12,8 @@ public class LevelSelectPage : Page
     private bool            showCompleted           = true;
 
     private LevelCategory   levelCat;
-    private List<Level>     levels;
+    private List<NewLevel>  levels;
+
     private Label           titleLabel;
     private VisualElement   levelIconContainer;
     private Label           completeCounter;
@@ -48,7 +49,7 @@ public class LevelSelectPage : Page
         //args[0]   -   Level Category  -   The type of levels to display
 
         levelCat    = (LevelCategory)args[0];
-        levels      = Resources.LoadAll<Level>("Levels/" + levelCat.ToString()).ToList();
+        levels      = LevelDefinitions.ALL_LEVELS.FindAll(x => x.Category == levelCat);
 
         GameManager.instance.CurrentLevelCategory = levelCat;
 
@@ -74,7 +75,7 @@ public class LevelSelectPage : Page
         int completeCount   = 0;
         int secretCount     = 0;
 
-        foreach (Level level in levels)
+        foreach (NewLevel level in levels)
         {
             VisualElement levelButton   = UIManager.instance.LevelTile.Instantiate();
             VisualElement wordContainer = levelButton.Q("WordContainer");
@@ -84,7 +85,7 @@ public class LevelSelectPage : Page
             levelButton.Q<Label>(UIManager.LEVEL_SELECT_BADGE__THEME_NAME)
                 .text                   = level.LevelNumber.ToString() + " - " + level.Theme;
 
-            if (level.Complete)
+            if (GameManager.instance.SaveData.IsLevelComplete(level.Category, level.LevelNumber))
             {
                 levelButton.Q(UIManager.LEVEL_SELECT_BADGE__COMPLETE_ICON_NAME).Show();
                 levelButton.ElementAt(0).SetBorderColor(Color.black);
@@ -98,7 +99,7 @@ public class LevelSelectPage : Page
                 badge.SetMargins(5f);
 
                 badge.ElementAt(0).style
-                    .backgroundColor    = level.FoundWords[i] ? UIManager.instance.GetColor(i) :
+                    .backgroundColor    = GameManager.instance.SaveData.IsWordFound(level.Category, level.LevelNumber, i) ? UIManager.instance.GetColor(i) :
                                             new Color(
                                                 UIManager.instance.GetColor(i).r
                                                 , UIManager.instance.GetColor(i).g
@@ -107,7 +108,7 @@ public class LevelSelectPage : Page
                                             );
 
                 Label word              = badge.Q<Label>(UIManager.SOLVED_WORD__WORD_NAME);
-                word.text               = level.FoundWords[i] ? level.Words[i].ToUpper() : "???";
+                word.text               = GameManager.instance.SaveData.IsWordFound(level.Category, level.LevelNumber, i) ? level.Words[i].ToUpper() : "???";
                 word.style.fontSize     = UIManager.GLOBAL_STYLE__SMALL_WORD_BADGE_WORDS_FONT_SIZE;
 
                 Label icons             = badge.Q<Label>(UIManager.SOVLED_WORD__LENGTH_INDICATOR_NAME);
@@ -122,7 +123,7 @@ public class LevelSelectPage : Page
             secretBadge.SetMargins(10f);
 
             secretBadge.ElementAt(0).style
-                .backgroundColor        = level.SecretWordFound ? UIManager.instance.GetColor(-1) :
+                .backgroundColor        = GameManager.instance.SaveData.IsSecretWordFound(level.Category, level.LevelNumber) ? UIManager.instance.GetColor(-1) :
                                             new Color(
                                                 UIManager.instance.GetColor(-1).r
                                                 , UIManager.instance.GetColor(-1).g
@@ -131,7 +132,7 @@ public class LevelSelectPage : Page
                                             );
 
             Label sbWord                = secretBadge.Q<Label>(UIManager.SOLVED_WORD__WORD_NAME);
-            sbWord.text                 = level.SecretWordFound ? level.SecretWord.ToUpper() : "???";
+            sbWord.text                 = GameManager.instance.SaveData.IsSecretWordFound(level.Category, level.LevelNumber) ? level.SecretWord.ToUpper() : "???";
             sbWord.style.fontSize       = UIManager.GLOBAL_STYLE__SMALL_WORD_BADGE_WORDS_FONT_SIZE;
 
             Label sbIcons               = secretBadge.Q<Label>(UIManager.SOVLED_WORD__LENGTH_INDICATOR_NAME);
@@ -140,14 +141,15 @@ public class LevelSelectPage : Page
 
             wordContainer.Add(secretBadge);
 
-            if (level.SecretWordFound)
+            if (GameManager.instance.SaveData.IsSecretWordFound(level.Category, level.LevelNumber))
                 secretCount++;
             //
 
-            completeCounter.text        = completeCount.ToString() + " / " + levels.Count.ToString();
-            secretCounter.text          = secretCount.ToString() + " / " + levels.Count.ToString();
-
+            completeCounter.text        = "TODO"; //completeCount.ToString() + " / " + levels_old.Count.ToString();
+            secretCounter.text          = "TODO"; //secretCount.ToString() + " / " + levels_old.Count.ToString();
             levelButton.RegisterCallback<ClickEvent>((_) => LoadLevel(_, level));
+
+
             levelButton.RegisterButtonStateVisualChanges(levelButton.ElementAt(0), Color.white, true, Color.white);
 
             levelIconContainer.Add(levelButton);
@@ -169,14 +171,14 @@ public class LevelSelectPage : Page
         hideCompletedButton.UnregisterCallback<ClickEvent>((_) => ShowHideCompleted());
     }
 
-    private void LoadLevel(ClickEvent _, Level level)
+    private void LoadLevel(ClickEvent _, NewLevel level)
     {
         if (!canClick)
             return;
 
         canClick        = false;
 
-        object[] args = new object[2];
+        object[] args   = new object[2];
         args[0]         = typeof(GamePage);
         args[1]         = new object[2] { false, level };
 
@@ -202,7 +204,10 @@ public class LevelSelectPage : Page
 
         foreach (VisualElement child in levelIconContainer.Children())
         {
-            child.Show(showCompleted || ((Level)child.userData).Complete == showCompleted);
+            NewLevel lev        = (NewLevel)child.userData;
+            bool completed      = GameManager.instance.SaveData.IsLevelComplete(lev.Category, lev.LevelNumber);
+
+            child.Show(showCompleted || completed == showCompleted);
         }
 
         hideCompletedButton.text = showCompleted ? "Hide Completed" : "Show Completed";

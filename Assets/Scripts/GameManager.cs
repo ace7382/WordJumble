@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -12,7 +13,10 @@ public class GameManager : MonoBehaviour
 
     #endregion
 
-    #region Inspector Variables
+    #region Private Consts
+
+    private const string SAVE_DIRECTORY             = "/SaveData/";
+    private const string FILE_NAME                  = "abc.sav";
 
     #endregion
 
@@ -23,11 +27,14 @@ public class GameManager : MonoBehaviour
     private bool                paused              = false;
     private LevelCategory       currentCategory;
 
+    private SaveFile            saveData;
+
     #endregion
 
     #region Public Properties
 
-    public LevelCategory    CurrentLevelCategory { get { return currentCategory; } set { currentCategory = value; } }
+    public LevelCategory    CurrentLevelCategory    { get { return currentCategory; } set { currentCategory = value; } }
+    public SaveFile         SaveData                { get { return saveData; } }
 
     #endregion
 
@@ -39,6 +46,12 @@ public class GameManager : MonoBehaviour
             instance = this;
         else if (instance != this)
             Destroy(gameObject);
+    }
+
+    public void Start()
+    {
+        if (!LoadSaveData())
+            saveData = new SaveFile();
     }
 
     public void Update()
@@ -84,16 +97,43 @@ public class GameManager : MonoBehaviour
         paused      = true;
     }
 
-    public Level GetNextLevel(Level currentLevel)
-    {  
-        List<Level> catLevels = Resources.LoadAll<Level>("Levels/" + GameManager.instance.CurrentLevelCategory.ToString()).ToList();
+    public NewLevel GetNextLevel(NewLevel currentLevel)
+    {
+        int nextIndex = LevelDefinitions.ALL_LEVELS.FindIndex(x => x.LevelNumber == currentLevel.LevelNumber + 1 && x.Category == currentLevel.Category);
 
-        int nextIndex = catLevels.FindIndex(x => x.LevelNumber == currentLevel.LevelNumber + 1);
+        if (nextIndex == -1)    return null;
+        else return             LevelDefinitions.ALL_LEVELS[nextIndex];
+    }
 
-        if (nextIndex == -1)
-            return null;
-        else
-            return catLevels[nextIndex];
+    public void SaveGame()
+    {
+        string dir = Application.persistentDataPath + SAVE_DIRECTORY;
+
+        if (!Directory.Exists(dir))
+            Directory.CreateDirectory(dir);
+
+        string json = JsonUtility.ToJson(saveData, true);
+
+        File.WriteAllText(dir + FILE_NAME, json);
+    }
+
+    #endregion
+
+    #region Private Functions
+
+    private bool LoadSaveData()
+    {
+        string filePath     = Application.persistentDataPath + SAVE_DIRECTORY + FILE_NAME;
+
+        if (File.Exists(filePath))
+        {
+            string json     = File.ReadAllText(filePath);
+            saveData        = JsonUtility.FromJson<SaveFile>(json);
+
+            return true;
+        }
+
+        return false;
     }
 
     #endregion

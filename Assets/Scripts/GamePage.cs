@@ -10,7 +10,7 @@ public class GamePage : Page
 {
     #region Private Variables
 
-    private Level                   currentLevel;
+    private NewLevel                currentLevel;
 
     private VisualElement           tileContainer;
     private VisualElement           foundWordContainer;
@@ -47,8 +47,8 @@ public class GamePage : Page
 
     #region Public Properties
 
-    public string           CurrentWord { get { return submittedWord.text.ToUpper(); } }
-    public string           SecretWord  { get { return currentLevel.SecretWord.ToUpper(); } }
+    public string                   CurrentWord         { get { return submittedWord.text.ToUpper(); } }
+    public string                   SecretWord          { get { return currentLevel.SecretWord.ToUpper(); } }
 
     #endregion
 
@@ -79,11 +79,11 @@ public class GamePage : Page
 
     public override void ShowPage(object[] args)
     {
-        //args[0]   -   bool    -   True = Daily Puzzle
-        //args[1]   -   Level   -   The level to load
+        //args[0]   -   bool        -   True = Daily Puzzle
+        //args[1]   -   NewLevel    -   The level to load
 
         dailyJumblie    = (bool)args[0];
-        currentLevel    = (Level)args[1];
+        currentLevel    = (NewLevel)args[1];
 
         SetupUI();
         AddListeners();
@@ -123,7 +123,9 @@ public class GamePage : Page
 
         for (int i = 0; i < currentLevel.Words.Count; i++)
         {
-            bool found = currentLevel.FoundWords[i];
+            bool found = dailyJumblie ?
+                GameManager.instance.SaveData.IsWordFound_Daily(i)
+                : GameManager.instance.SaveData.IsWordFound(currentLevel.Category, currentLevel.LevelNumber, i);
 
             foreach (char letter in currentLevel.Words[i])
             {
@@ -156,7 +158,7 @@ public class GamePage : Page
             badge.Q<Label>(UIManager.SOVLED_WORD__LENGTH_INDICATOR_NAME)
                 .text               = new string(UIManager.WORD_LENGTH_INDICATOR_SYMBOL, i + 1).Aggregate(string.Empty, (c, i) => c + i + ' ').TrimEnd();
 
-            badge.Show(currentLevel.FoundWords[i]);
+            badge.Show(found);
 
             badge.transform.scale   = Vector3.zero;
 
@@ -181,7 +183,8 @@ public class GamePage : Page
             secretWordBadge
                 .transform.scale    = Vector3.zero;
             
-            secretWordBadge.Show(currentLevel.SecretWordFound);
+            secretWordBadge.Show(GameManager.instance.SaveData.IsSecretWordFound(currentLevel.Category, currentLevel.LevelNumber));
+
             foundWordContainer.Add(secretWordBadge);
             ////////
 
@@ -326,7 +329,7 @@ public class GamePage : Page
             }    
         }
 
-        if (index > -1 && !currentLevel.FoundWords[index])
+        if (index > -1 && !GameManager.instance.SaveData.IsWordFound(currentLevel.Category, currentLevel.LevelNumber, index))
         {
             foreach (Tile t in selectedTiles)
             {
@@ -356,7 +359,8 @@ public class GamePage : Page
                 }
             }
 
-            currentLevel.WordFound(index);
+            GameManager.instance.SaveData.MarkWordFound(currentLevel, index);
+
             ClearAll();
         }
         else 
@@ -414,10 +418,10 @@ public class GamePage : Page
 
     private void SecretWordFound()
     {
-        if (currentLevel.SecretWordFound)
+        if (GameManager.instance.SaveData.IsSecretWordFound(currentLevel.Category, currentLevel.LevelNumber))
             return;
 
-        currentLevel.SecretWordFound = true;
+        GameManager.instance.SaveData.MarkSecretWordFound(currentLevel);
 
         secretWordBadge.Show();
         PulseFoundWordBadge(secretWordBadge).Play().OnComplete(() => { FinishLevel(); }); ;
@@ -477,50 +481,47 @@ public class GamePage : Page
 
     private void FinishLevel()
     {
-        if (currentLevel.FoundWords.FindIndex(x => !x) > -1)
+        if (!dailyJumblie && !GameManager.instance.SaveData.IsLevelComplete(currentLevel))
             return;
 
-        currentLevel.Complete = true;
+        Debug.Log(dailyJumblie + " && " + !GameManager.instance.SaveData.IsLevelComplete_Daily(PlayFabManager.instance.ServerDate));
 
-        canClick        = false;
+        if (dailyJumblie && !GameManager.instance.SaveData.IsLevelComplete_Daily(PlayFabManager.instance.ServerDate))
+            return;
+
+        canClick            = false;
 
         Pause();
 
-        object[] args   = new object[7];
-        Level nextLevel = dailyJumblie ? null : GameManager.instance.GetNextLevel(currentLevel);
+        object[] args       = new object[7];
+        NewLevel nextLevel  = dailyJumblie ? null : GameManager.instance.GetNextLevel(currentLevel);
 
-        args[0]         = dailyJumblie ? "Daily Jumblie Complete!\n" + timer.text
+        args[0]             = dailyJumblie ? "Daily Jumblie Complete!\n" + timer.text
                                         : (nextLevel == null ? "All Levels Complete!" : "Level Complete");
-        args[1]         = "Exit";
-        args[2]         = nextLevel == null ? null : "Next Level";
-        args[3]         = action_MainMenu;
+        args[1]             = "Exit";
+        args[2]             = nextLevel == null ? null : "Next Level";
+        args[3]             = action_MainMenu;
 
-        Action openNext = delegate {
-                            //object[] args   = new object[2];
-                            //args[0]         = false;
-                            //args[1]         = nextLevel;
+        Action openNext     = delegate {
+                                object[] args   = new object[2];
+                                args[0]         = typeof(GamePage);
+                                args[1]         = new object[2] { false, nextLevel };
 
-                            //PageManager.instance.StartCoroutine(PageManager.instance.OpenPageOnAnEmptyStack<GamePage>(args));
+                                PageManager.instance.StartCoroutine(PageManager.instance.AddPageToStack<PageLoadAnimationPage>(args));
 
-                            object[] args   = new object[2];
-                            args[0]         = typeof(GamePage);
-                            args[1]         = new object[2] { false, nextLevel };
+                            };
 
-                            PageManager.instance.StartCoroutine(PageManager.instance.AddPageToStack<PageLoadAnimationPage>(args));
+        args[4]             = openNext;
 
-                        };
-
-        args[4]         = openNext;
-
-        if (!dailyJumblie && !currentLevel.SecretWordFound)
+        if (!dailyJumblie && !GameManager.instance.SaveData.IsSecretWordFound(currentLevel))
         {
-            args[5]     = "Find Secret";
-            args[6]     = action_CloseOverlay;
+            args[5]         = "Find Secret";
+            args[6]         = action_CloseOverlay;
         }
         else
         {
-            args[5]     = null;
-            args[6]     = null;
+            args[5]         = null;
+            args[6]         = null;
         }
 
         PageManager.instance.StartCoroutine(PageManager.instance.AddPageToStack<GameOverlayPage>(args));

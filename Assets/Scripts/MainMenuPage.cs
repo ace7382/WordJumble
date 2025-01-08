@@ -111,13 +111,6 @@ public class MainMenuPage : Page
     {
         canClick    = false;
 
-        //string path = "Levels/Daily/"
-        //                + DateTime.Now.Year.ToString() + "/"
-        //                + DateTime.Now.Month.ToString() + "/"
-        //                + DateTime.Now.Day.ToString();
-
-        //dailyLevel  = Resources.Load<Level>(path);
-
         GameManager.instance.CurrentLevelCategory = LevelCategory.NULL;
 
         PlayFabManager.instance.DeviceLogin();
@@ -201,7 +194,7 @@ public class MainMenuPage : Page
         levelButton.Q<Label>(UIManager.LEVEL_SELECT_BADGE__THEME_NAME)
             .text                   = PlayFabManager.instance.DailyLevel.Theme;
 
-        if(PlayFabManager.instance.DailyLevel.Complete)
+        if (GameManager.instance.SaveData.IsLevelComplete_Daily(PlayFabManager.instance.ServerDate))
         {
             levelButton.Q(UIManager.LEVEL_SELECT_BADGE__COMPLETE_ICON_NAME).Show();
             levelButton.ElementAt(0).SetBorderColor(Color.black);
@@ -216,7 +209,8 @@ public class MainMenuPage : Page
             badge.SetMargins(5f);
 
             badge.ElementAt(0).style
-                .backgroundColor    = PlayFabManager.instance.DailyLevel.FoundWords[i] ?
+                //.backgroundColor    = PlayFabManager.instance.DailyLevel.FoundWords[i] ?
+                .backgroundColor    = GameManager.instance.SaveData.IsWordFound_Daily(i) ?
                                         UIManager.instance.GetColor(i) :
                                         new Color(
                                             UIManager.instance.GetColor(i).r
@@ -226,7 +220,7 @@ public class MainMenuPage : Page
                                         );
 
             Label word              = badge.Q<Label>(UIManager.SOLVED_WORD__WORD_NAME);
-            word.text = PlayFabManager.instance.DailyLevel.FoundWords[i] ? PlayFabManager.instance.DailyLevel.Words[i].ToUpper() : "???";
+            word.text               = GameManager.instance.SaveData.IsWordFound_Daily(i) ? PlayFabManager.instance.DailyLevel.Words[i].ToUpper() : "???";
             word.style.fontSize     = UIManager.GLOBAL_STYLE__SMALL_WORD_BADGE_WORDS_FONT_SIZE;
 
             Label icons             = badge.Q<Label>(UIManager.SOVLED_WORD__LENGTH_INDICATOR_NAME);
@@ -235,8 +229,6 @@ public class MainMenuPage : Page
 
             wordContainer.Add(badge);
         }
-
-        //levelButton.RegisterCallback<ClickEvent>((_) => OpenDailyLevel(_));
 
         levelButton.RegisterButtonStateVisualChanges(levelButton.ElementAt(0), Color.white, true, Color.white); 
 
