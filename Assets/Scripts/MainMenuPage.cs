@@ -8,6 +8,13 @@ using System.Linq;
 
 public class MainMenuPage : Page
 {
+    #region Private Consts
+
+    private const float     animInTime      = .7f;
+    private const float     secAnimInTime   = .4f;
+
+    #endregion
+
     #region Private Variables
 
     private bool            canClick;
@@ -22,15 +29,70 @@ public class MainMenuPage : Page
     private Button          fiveWordButton;
     private Button          sixWordButton;
 
+    private VisualElement   titleContainer;
+    private Label           title;
+    private Label           subtitle;
+
+    private Vector3         titleContainerPosition;
+
     #endregion
 
     #region Inherited Functions
 
     public override IEnumerator AnimateIn()
     {
+        Sequence s = DOTween.Sequence();
+
+        //Tween titleFlyIn = DOTween.To(
+        //    () => titleContainer.transform.position
+        //    , x => titleContainer.transform.position = x
+        //    , titleContainerPosition
+        //    , animInTime
+        //).SetEase(Ease.InSine);
+
+        Tween titleFlyIn = DOTween.To(
+            () => titleContainer.resolvedStyle.translate.y
+            , newY => titleContainer.style.translate = new Translate(new Length(0f), new Length(newY), 0f)
+            , 0f
+            , animInTime
+        ).SetEase(Ease.InSine);
+
+        Tween titleFadeIn = DOTween.To(
+            () => titleContainer.style.opacity.value
+            , x => titleContainer.style.opacity = new StyleFloat(x)
+            , 1f
+            , animInTime
+        ).SetEase(Ease.InSine);
+
+        s.Join(titleFlyIn);
+        s.Join(titleFadeIn);
+
+        subtitle.SetOpacity(0f);
+
+        Tween subFadeIn     = DOTween.To(
+            () => subtitle.style.opacity.value
+            , x => subtitle.style.opacity = new StyleFloat(x)
+            , 1f
+            , secAnimInTime
+        ).SetEase(Ease.InSine);
+
+        s.Append(subFadeIn);
+
+        VisualElement dividerLine = uiDoc.rootVisualElement.Q<VisualElement>("DividerLine");
+        dividerLine.style.width = Length.Percent(0f);
+
+        Tween lineGrow = DOTween.To(
+            () => dividerLine.style.width.value.value
+            , x => dividerLine.style.width = Length.Percent(x)
+            , 100f
+            , secAnimInTime
+        ).SetEase(Ease.InSine);
+
+        s.Join(lineGrow);
+
+        yield return s.Play().WaitForCompletion();
 
         canClick = true;
-        return null;
     }
 
     public override IEnumerator AnimateOut()
@@ -76,6 +138,14 @@ public class MainMenuPage : Page
                 () => icon.worldTransform.rotation.eulerAngles,
                 x => icon.transform.rotation = Quaternion.Euler(x),
                 new Vector3(0f, 0f, 360f), 5.0f).SetEase(Ease.Linear).SetLoops(-1);
+
+        titleContainer              = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.MAIN_MENU_PAGE__TITLE_CONTAINER_NAME);
+        title                       = uiDoc.rootVisualElement.Q<Label>(UIManager.MAIN_MENU_PAGE__TITLE_NAME);
+        subtitle                    = uiDoc.rootVisualElement.Q<Label>(UIManager.MAIN_MENU_PAGE__SUBTITLE_NAME);
+
+        //titleContainerPosition      = titleContainer.transform.position;
+        //titleContainer.transform
+        //    .position               = new Vector3(titleContainerPosition.x, -200f, titleContainerPosition.z);
 
         beginnerButton              = uiDoc.rootVisualElement.Q<Button>(UIManager.MAIN_MENU_PAGE__BEGINNER_BUTTON_NAME);
         originalButton              = uiDoc.rootVisualElement.Q<Button>(UIManager.MAIN_MENU_PAGE__ORIGINAL_BUTTON_NAME);
@@ -177,7 +247,7 @@ public class MainMenuPage : Page
             () => dailyLevelButtonContainer.transform.scale
             , (x) => dailyLevelButtonContainer.transform.scale = x
             , Vector3.one
-            , .5f
+            , animInTime
         ).Play()
         .OnComplete(() => levelButton.RegisterCallback<ClickEvent>((_) => OpenDailyLevel(_)));
     }

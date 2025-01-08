@@ -55,8 +55,8 @@ public class PlayFabManager : MonoBehaviour
     {
         var req = new LoginWithCustomIDRequest
         {
-            CustomId = SystemInfo.deviceUniqueIdentifier,
-            CreateAccount = false
+            CustomId        = SystemInfo.deviceUniqueIdentifier,
+            CreateAccount   = true
         };
 
         PlayFabClientAPI.LoginWithCustomID(
@@ -77,6 +77,9 @@ public class PlayFabManager : MonoBehaviour
 
     public void GetServerTime_Success(GetTimeResult result)
     {
+        if (ServerDate.Date == result.Time.Date)
+            return;
+
         serverDate              = result.Time;
         string lookupString     = serverDate.ToString("yyyy_MM_dd");
 

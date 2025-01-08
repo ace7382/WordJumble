@@ -462,6 +462,7 @@ MonoBehaviour:
   - {r: 1, g: 0, b: 1, a: 1}
   - {r: 0.40993643, g: 0, b: 1, a: 1}
   secretWordColor: {r: 0.011764707, g: 1, b: 1, a: 1}
+  frameRateTarget: 60
 --- !u!114 &1826350932
 MonoBehaviour:
   m_ObjectHideFlags: 0

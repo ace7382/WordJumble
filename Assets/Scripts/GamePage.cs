@@ -203,7 +203,7 @@ public class GamePage : Page
         hideFoundButton.RegisterButtonStateVisualChanges(hideFoundButton, Color.black, true, Color.white);
 
         Shuffle();
-        ShowHideFoundTiles();
+        //ShowHideFoundTiles();
     }
 
     private void AddListeners()

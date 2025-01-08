@@ -14,6 +14,9 @@ public class UIManager : MonoBehaviour
     #region Public Consts
 
     public const string MAIN_MENU_PAGE__ICON_NAME                   = "Icon";
+    public const string MAIN_MENU_PAGE__TITLE_CONTAINER_NAME        = "TitleContainer";
+    public const string MAIN_MENU_PAGE__TITLE_NAME                  = "Title";
+    public const string MAIN_MENU_PAGE__SUBTITLE_NAME               = "Subtitle";
     public const string MAIN_MENU_PAGE__DAILY_CONTAINER_NAME        = "DailyContainer";
     public const string MAIN_MENU_PAGE__BEGINNER_BUTTON_NAME        = "BeginnerButton";
     public const string MAIN_MENU_PAGE__ORIGINAL_BUTTON_NAME        = "OriginalButton";
@@ -73,6 +76,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private List<Color>        solvedWordColors;
     [SerializeField] private Color              secretWordColor;
 
+    [SerializeField] private int                frameRateTarget;
+
     #endregion
 
     #region Public Properties
@@ -92,6 +97,9 @@ public class UIManager : MonoBehaviour
             instance = this;
         else if (instance != this)
             Destroy(gameObject);
+
+        Application.targetFrameRate = frameRateTarget;
+        Screen.orientation          = ScreenOrientation.Portrait;
     }
 
     #endregion
