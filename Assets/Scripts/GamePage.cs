@@ -265,7 +265,7 @@ public class GamePage : Page
                 new Vector3(1f, 1f, 1f),
                 .2f
             )
-            .SetEase(Ease.Linear)
+            .SetEase(Ease.InSine)
             .SetLoops(1);
 
             s.Join(secret);
@@ -367,11 +367,8 @@ public class GamePage : Page
                 ClearAll();
             }
             else
-                IncorrectGuessSubmitted(CurrentWord);//incorrectGuesses.Add(CurrentWord);
+                IncorrectGuessSubmitted(CurrentWord);
         }
-
-        //ClearAll();
-        //FinishLevel();
     }
 
     private void IncorrectGuessSubmitted(string word)
@@ -535,9 +532,8 @@ public class GamePage : Page
             () => badge.transform.scale,
             x => badge.transform.scale = x,
             new Vector3(1.2f, 1.2f, 1f), .2f)
-            .SetEase(Ease.InOutBounce)
+            .SetEase(Ease.InSine)
             .SetLoops(2, LoopType.Yoyo);
-            //.Play();
 
         return pulse;
     }
