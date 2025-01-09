@@ -40,6 +40,8 @@ public class GamePage : Page
 
     private bool                    initialLoad         = true;
 
+    private bool                    returningForSecret  = false;
+
     private Action                  action_MainMenu     = delegate { PageManager.instance.StartCoroutine(PageManager.instance.OpenPageOnAnEmptyStack<MainMenuPage>()); };
     private Action                  action_CloseOverlay = delegate { PageManager.instance.StartCoroutine(PageManager.instance.CloseTopPage()); };
 
@@ -70,11 +72,11 @@ public class GamePage : Page
 
     public override void HidePage()
     {
-        Debug.Log("Game Page Hiding");
-
         GameManager.instance.StopTimer();
 
         RemoveListeners();
+
+        GameManager.instance.SaveGame();
     }
 
     public override void ShowPage(object[] args)
@@ -94,7 +96,16 @@ public class GamePage : Page
         canClick            = true;
 
         if (initialLoad)    InitialStart(); //initialLoad = false;
-        else                Pause();
+        else
+        {
+            if (returningForSecret)
+            {
+                ShowHideFoundTiles();
+                returningForSecret = false;
+            }
+
+            Pause();
+        }
     }
 
     #endregion
@@ -206,7 +217,6 @@ public class GamePage : Page
         hideFoundButton.RegisterButtonStateVisualChanges(hideFoundButton, Color.black, true, Color.white);
 
         Shuffle();
-        //ShowHideFoundTiles();
     }
 
     private void AddListeners()
@@ -277,7 +287,7 @@ public class GamePage : Page
         s.Play().OnComplete(() =>
                 {
                     if (dailyJumblie)
-                        GameManager.instance.SetTime(timer);
+                        GameManager.instance.SetTime(timer, false, GameManager.instance.SaveData.DailyPuzzleTimeInSeconds);
 
                     initialLoad = false;
                     canClick    = true;
@@ -506,13 +516,14 @@ public class GamePage : Page
                                 args[1]         = new object[2] { false, nextLevel };
 
                                 PageManager.instance.StartCoroutine(PageManager.instance.AddPageToStack<PageLoadAnimationPage>(args));
-
                             };
 
         args[4]             = openNext;
 
         if (!dailyJumblie && !GameManager.instance.SaveData.IsSecretWordFound(currentLevel))
         {
+            returningForSecret = true;
+
             args[5]         = "Find Secret";
             args[6]         = action_CloseOverlay;
         }

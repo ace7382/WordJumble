@@ -75,12 +75,14 @@ public class GameManager : MonoBehaviour
 
     #region Public Functions
 
-    public void SetTime(Button ve, bool resetTime = false)
+    public void SetTime(Button ve, bool resetTime = false, float startingTime = 0f)
     {
         Debug.Log("Setting Time: " + resetTime);
 
         if (resetTime)
             time    = 0f;
+        else
+            time    = startingTime;
 
         timerButton = ve;
         paused      = false;
@@ -128,6 +130,8 @@ public class GameManager : MonoBehaviour
         string json = JsonUtility.ToJson(saveData, true);
 
         File.WriteAllText(dir + FILE_NAME, json);
+
+        Debug.Log("Game Saved to " + dir + FILE_NAME);
     }
 
     #endregion
@@ -138,10 +142,14 @@ public class GameManager : MonoBehaviour
     {
         string filePath     = Application.persistentDataPath + SAVE_DIRECTORY + FILE_NAME;
 
+        Debug.Log("Loading Save From: " + filePath);
+
         if (File.Exists(filePath))
         {
             string json     = File.ReadAllText(filePath);
             saveData        = JsonUtility.FromJson<SaveFile>(json);
+
+            Debug.Log(json);
 
             return true;
         }
