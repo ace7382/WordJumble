@@ -11,6 +11,7 @@ public class SaveFile
     public Dictionary<LevelCategory, Dictionary<int, bool>>         SecretWordProgress;
     public List<bool>                                               TodaysDailyProgress;
     public List<DateTime>                                           CompletedDailyPuzzles;
+    public float                                                    DailyPuzzleTimeInSeconds    = 0f;
 
     public SaveFile()
     {
@@ -57,10 +58,18 @@ public class SaveFile
         return CompletedDailyPuzzles.FindIndex(x => x.Date == date.Date) > -1;
     }
 
+    public bool IsLevelComplete_Daily()
+    {
+        return IsLevelComplete_Daily(PlayFabManager.instance.ServerDate);
+    }
+
     public bool IsWordFound(LevelCategory cat, int levNum, int wordIndex)
     {
         if (cat == LevelCategory.DAILY)
             return IsWordFound_Daily(wordIndex);
+
+        Debug.Log("Looking for Level Cat: " + cat + ", Level #: " + levNum + ", word #: " + wordIndex);
+        Debug.Log("Number of levels in Cat: " + LevelProgress[cat].Count);
 
         return LevelProgress[cat][levNum][wordIndex];
     }
@@ -101,5 +110,11 @@ public class SaveFile
     public void MarkSecretWordFound(NewLevel lev)
     {
         SecretWordProgress[lev.Category][lev.LevelNumber] = true;
+    }
+
+    public void NewDay_ResetTimeAndFoundList()
+    {
+        TodaysDailyProgress         = Enumerable.Repeat(false, PlayFabManager.instance.DailyLevel.Words.Count).ToList();
+        DailyPuzzleTimeInSeconds    = 0f;
     }
 }

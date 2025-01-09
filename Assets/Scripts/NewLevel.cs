@@ -23,11 +23,11 @@ public class NewLevel
 
     public NewLevel(LevelCategory category, string theme, int levelNumber, List<string> words, string secretWord)
     {
-        Category = category;
-        Theme = theme;
-        LevelNumber = levelNumber;
-        Words = words;
-        SecretWord = secretWord;
+        Category            = category;
+        Theme               = theme;
+        LevelNumber         = levelNumber;
+        Words               = words;
+        SecretWord          = secretWord;
     }
 }
 
@@ -35,8 +35,8 @@ public static class LevelDefinitions
 {
     public static List<NewLevel> ALL_LEVELS = new List<NewLevel>()
     {
-        new NewLevel(LevelCategory.BEGINNER, "Test", 1, new List<string>() { "aa", "bbb", "cccc", "dddd" }, "Bad"),
-        new NewLevel(LevelCategory.BEGINNER, "Test2", 2, new List<string>() { "xx", "yyy", "zzzz", "adam" }, "Yam"),
+        new NewLevel(LevelCategory.BEGINNER, "Test", 0, new List<string>() { "aa", "bbb", "cccc", "dddd" }, "Bad"),
+        new NewLevel(LevelCategory.BEGINNER, "Test2", 1, new List<string>() { "xx", "yyy", "zzzz", "adam" }, "Yam"),
         new NewLevel(LevelCategory.ORIGINAL, "Ocean", 1, new List<string>() { "Crab", "Beach", "Dolphin", "Seahorse" }, "Sea"),
         new NewLevel(LevelCategory.ORIGINAL, "Forest", 2, new List<string>() { "Bear", "Trail", "Hiking", "Campfire" }, "Camping"),
         new NewLevel(LevelCategory.ORIGINAL, "Desert", 3, new List<string>() { "Sand", "Snake", "Cactus", "Drought" }, "Sun"),

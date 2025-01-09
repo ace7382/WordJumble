@@ -484,8 +484,6 @@ public class GamePage : Page
         if (!dailyJumblie && !GameManager.instance.SaveData.IsLevelComplete(currentLevel))
             return;
 
-        Debug.Log(dailyJumblie + " && " + !GameManager.instance.SaveData.IsLevelComplete_Daily(PlayFabManager.instance.ServerDate));
-
         if (dailyJumblie && !GameManager.instance.SaveData.IsLevelComplete_Daily(PlayFabManager.instance.ServerDate))
             return;
 

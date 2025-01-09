@@ -66,6 +66,9 @@ public class GameManager : MonoBehaviour
         //var fraction        = (time * 100) % 100;
         //timerButton.text    = string.Format("{0:00} : {1:00} : {2:000}", minutes, seconds, fraction);
         timerButton.text    = string.Format("{0:00} : {1:00}", minutes, seconds);
+
+        if (time > 0f)
+            SaveDailyTime();
     }
 
     #endregion
@@ -95,6 +98,16 @@ public class GameManager : MonoBehaviour
     public void PauseTimer()
     {
         paused      = true;
+    }
+
+    public void SaveDailyTime()
+    {
+        saveData.DailyPuzzleTimeInSeconds = time;
+    }
+
+    public void ResetDailyTime()
+    {
+        saveData.DailyPuzzleTimeInSeconds = 0f;
     }
 
     public NewLevel GetNextLevel(NewLevel currentLevel)

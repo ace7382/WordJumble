@@ -34,6 +34,13 @@ public class UIManager : MonoBehaviour
 
     public const string LEVEL_SELECT_BADGE__THEME_NAME              = "ThemeLabel";
     public const string LEVEL_SELECT_BADGE__COMPLETE_ICON_NAME      = "CompletedIcon";
+    public const string LEVEL_SELECT_BADGE__WORDBADGE_NAME          = "WordBadge";
+    public const string LEVEL_SELECT_BADGE__WORD_NAME               = "Word";
+    public const string LEVEL_SELECT_BADGE__UNFOUND_WORD_NAME       = "???";
+    public const string LEVEL_SELECT_BADGE__SECRET_BADGE_NAME       = "SecretBadge";
+    public const string LEVEL_SELECT_BADGE__DAILY_ROW_NAME          = "DailyPuzzleStatusRow";
+    public const string LEVEL_SELECT_BADGE__DAILY_STATUS_LABEL_NAME = "DailyPuzzleStatusLabel";
+    public const string LEVEL_SELECT_BADGE__ROW_2_NAME              = "Row2";
 
     public const string GAME_PAGE__TILE_CONTAINER_NAME              = "TileContainer";
     public const string GAME_PAGE__SUBMITTED_WORD_NAME              = "SubmittedWord";
@@ -71,7 +78,7 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private VisualTreeAsset    letterTile;
     [SerializeField] private VisualTreeAsset    solvedWordTile;
-    [SerializeField] private VisualTreeAsset    levelTile;
+    [SerializeField] private VisualTreeAsset    levelBadge;
 
     [SerializeField] private List<Color>        solvedWordColors;
     [SerializeField] private Color              secretWordColor;
@@ -84,7 +91,7 @@ public class UIManager : MonoBehaviour
 
     public VisualTreeAsset  LetterTile          { get { return letterTile; } }
     public VisualTreeAsset  SolvedWordTile      { get { return solvedWordTile; } }
-    public VisualTreeAsset  LevelTile           { get { return levelTile; } }
+    public VisualTreeAsset  LevelBadge          { get { return levelBadge; } }
     public int              WordColorMax        { get { return solvedWordColors.Count; } }
 
     #endregion

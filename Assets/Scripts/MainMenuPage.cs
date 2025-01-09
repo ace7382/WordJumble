@@ -184,56 +184,12 @@ public class MainMenuPage : Page
 
     private void SetupDailyJumblieButton()
     {
-        dailyJumblieLabel.text      = "Daily Jumblie - " + PlayFabManager.instance.ServerDate.ToString("M/d/yyyy");
-        dailyJumblieLabel.Show();
+        VisualElement levelBadge    = UIManager.instance.LevelBadge.Instantiate();
+        LevelBadge controller       = new LevelBadge(levelBadge, PlayFabManager.instance.DailyLevel);
 
-        //Setup Daily Jumblie Button
-        VisualElement levelButton   = UIManager.instance.LevelTile.Instantiate();
-        VisualElement wordContainer = levelButton.Q("WordContainer");
+        dailyLevelButtonContainer.Add(levelBadge);
 
-        levelButton.Q<Label>(UIManager.LEVEL_SELECT_BADGE__THEME_NAME)
-            .text                   = PlayFabManager.instance.DailyLevel.Theme;
-
-        if (GameManager.instance.SaveData.IsLevelComplete_Daily(PlayFabManager.instance.ServerDate))
-        {
-            levelButton.Q(UIManager.LEVEL_SELECT_BADGE__COMPLETE_ICON_NAME).Show();
-            levelButton.ElementAt(0).SetBorderColor(Color.black);
-
-            //TODO: Add a timer/score for completed levels on the badge
-        }
-
-        for (int i = 0; i < PlayFabManager.instance.DailyLevel.Words.Count; i++)
-        {
-            //TODO: Create a controller? Similar instantiation on GamePage setup
-            VisualElement badge     = UIManager.instance.SolvedWordTile.Instantiate();
-            badge.SetMargins(5f);
-
-            badge.ElementAt(0).style
-                //.backgroundColor    = PlayFabManager.instance.DailyLevel.FoundWords[i] ?
-                .backgroundColor    = GameManager.instance.SaveData.IsWordFound_Daily(i) ?
-                                        UIManager.instance.GetColor(i) :
-                                        new Color(
-                                            UIManager.instance.GetColor(i).r
-                                            , UIManager.instance.GetColor(i).g
-                                            , UIManager.instance.GetColor(i).b
-                                            , .4f
-                                        );
-
-            Label word              = badge.Q<Label>(UIManager.SOLVED_WORD__WORD_NAME);
-            word.text               = GameManager.instance.SaveData.IsWordFound_Daily(i) ? PlayFabManager.instance.DailyLevel.Words[i].ToUpper() : "???";
-            word.style.fontSize     = UIManager.GLOBAL_STYLE__SMALL_WORD_BADGE_WORDS_FONT_SIZE;
-
-            Label icons             = badge.Q<Label>(UIManager.SOVLED_WORD__LENGTH_INDICATOR_NAME);
-            icons.text              = new string(UIManager.WORD_LENGTH_INDICATOR_SYMBOL, i + 1).Aggregate(string.Empty, (c, i) => c + i + ' ').TrimEnd();
-            icons.style.fontSize    = UIManager.GLOBAL_STYLE__SMALL_WORD_BADGE_ICONS_FONT_SIZE;
-
-            wordContainer.Add(badge);
-        }
-
-        levelButton.RegisterButtonStateVisualChanges(levelButton.ElementAt(0), Color.white, true, Color.white); 
-
-        dailyLevelButtonContainer.Add(levelButton);
-        /////////////
+        Action onClick              = delegate { OpenDailyLevel(null); };
 
         Tween t = DOTween.To(
             () => dailyLevelButtonContainer.transform.scale
@@ -241,7 +197,10 @@ public class MainMenuPage : Page
             , Vector3.one
             , animInTime
         ).Play()
-        .OnComplete(() => levelButton.RegisterCallback<ClickEvent>((_) => OpenDailyLevel(_)));
+        .OnComplete(() => {
+            if (!GameManager.instance.SaveData.IsLevelComplete_Daily())
+                controller.RegisterOnClick(onClick);
+        });
     }
 
     private void RegisterCallbacksAndEvents()

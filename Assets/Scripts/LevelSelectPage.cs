@@ -77,82 +77,24 @@ public class LevelSelectPage : Page
 
         foreach (NewLevel level in levels)
         {
-            VisualElement levelButton   = UIManager.instance.LevelTile.Instantiate();
-            VisualElement wordContainer = levelButton.Q("WordContainer");
+            VisualElement levelBadge    = UIManager.instance.LevelBadge.Instantiate();
+            LevelBadge controller       = new LevelBadge(levelBadge, level);
+            System.Action onClick       = delegate
+                                        {
+                                            LoadLevel(null, level);
+                                        };
 
-            levelButton.userData        = level;
+            controller.RegisterOnClick(onClick);
+            levelIconContainer.Add(levelBadge);
 
-            levelButton.Q<Label>(UIManager.LEVEL_SELECT_BADGE__THEME_NAME)
-                .text                   = level.LevelNumber.ToString() + " - " + level.Theme;
-
-            if (GameManager.instance.SaveData.IsLevelComplete(level.Category, level.LevelNumber))
-            {
-                levelButton.Q(UIManager.LEVEL_SELECT_BADGE__COMPLETE_ICON_NAME).Show();
-                levelButton.ElementAt(0).SetBorderColor(Color.black);
+            if (GameManager.instance.SaveData.IsLevelComplete(level))
                 completeCount++;
-            }
 
-            for (int i = 0; i < level.Words.Count; i++)
-            {
-                //TODO: Create a controller? Similar instantiation on GamePage setup
-                VisualElement badge     = UIManager.instance.SolvedWordTile.Instantiate();
-                badge.SetMargins(5f);
-
-                badge.ElementAt(0).style
-                    .backgroundColor    = GameManager.instance.SaveData.IsWordFound(level.Category, level.LevelNumber, i) ? UIManager.instance.GetColor(i) :
-                                            new Color(
-                                                UIManager.instance.GetColor(i).r
-                                                , UIManager.instance.GetColor(i).g
-                                                , UIManager.instance.GetColor(i).b
-                                                , .4f
-                                            );
-
-                Label word              = badge.Q<Label>(UIManager.SOLVED_WORD__WORD_NAME);
-                word.text               = GameManager.instance.SaveData.IsWordFound(level.Category, level.LevelNumber, i) ? level.Words[i].ToUpper() : "???";
-                word.style.fontSize     = UIManager.GLOBAL_STYLE__SMALL_WORD_BADGE_WORDS_FONT_SIZE;
-
-                Label icons             = badge.Q<Label>(UIManager.SOVLED_WORD__LENGTH_INDICATOR_NAME);
-                icons.text              = new string(UIManager.WORD_LENGTH_INDICATOR_SYMBOL, i + 1).Aggregate(string.Empty, (c, i) => c + i + ' ').TrimEnd();
-                icons.style.fontSize    = UIManager.GLOBAL_STYLE__SMALL_WORD_BADGE_ICONS_FONT_SIZE;
-
-                wordContainer.Add(badge);
-            }
-
-            //Secret Word Badge
-            VisualElement secretBadge   = UIManager.instance.SolvedWordTile.Instantiate();
-            secretBadge.SetMargins(10f);
-
-            secretBadge.ElementAt(0).style
-                .backgroundColor        = GameManager.instance.SaveData.IsSecretWordFound(level.Category, level.LevelNumber) ? UIManager.instance.GetColor(-1) :
-                                            new Color(
-                                                UIManager.instance.GetColor(-1).r
-                                                , UIManager.instance.GetColor(-1).g
-                                                , UIManager.instance.GetColor(-1).b
-                                                , .4f
-                                            );
-
-            Label sbWord                = secretBadge.Q<Label>(UIManager.SOLVED_WORD__WORD_NAME);
-            sbWord.text                 = GameManager.instance.SaveData.IsSecretWordFound(level.Category, level.LevelNumber) ? level.SecretWord.ToUpper() : "???";
-            sbWord.style.fontSize       = UIManager.GLOBAL_STYLE__SMALL_WORD_BADGE_WORDS_FONT_SIZE;
-
-            Label sbIcons               = secretBadge.Q<Label>(UIManager.SOVLED_WORD__LENGTH_INDICATOR_NAME);
-            sbIcons.text                = UIManager.WORD_LENGTH_INDICATOR_SYMBOL.ToString() + " Secret Word " + UIManager.WORD_LENGTH_INDICATOR_SYMBOL.ToString();
-            sbIcons.style.fontSize      = UIManager.GLOBAL_STYLE__SMALL_WORD_BADGE_ICONS_FONT_SIZE;
-
-            wordContainer.Add(secretBadge);
-
-            if (GameManager.instance.SaveData.IsSecretWordFound(level.Category, level.LevelNumber))
+            if (GameManager.instance.SaveData.IsSecretWordFound(level))
                 secretCount++;
-            //
 
-            completeCounter.text        = "TODO"; //completeCount.ToString() + " / " + levels_old.Count.ToString();
-            secretCounter.text          = "TODO"; //secretCount.ToString() + " / " + levels_old.Count.ToString();
-            levelButton.RegisterCallback<ClickEvent>((_) => LoadLevel(_, level));
-
-
-            levelButton.RegisterButtonStateVisualChanges(levelButton.ElementAt(0), Color.white, true, Color.white);
-
-            levelIconContainer.Add(levelButton);
+            completeCounter.text        = completeCount.ToString() + " / " + levels.Count.ToString();
+            secretCounter.text          = secretCount.ToString() + " / " + levels.Count.ToString();
         }
     }
 
