@@ -1,4 +1,5 @@
 using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -50,8 +51,10 @@ public class GameManager : MonoBehaviour
 
     public void Start()
     {
-        if (!LoadSaveData())
-            saveData = new SaveFile();
+        //if (!LoadSaveData())
+        //    saveData = new SaveFile();
+
+        LoadSaveData();
     }
 
     public void Update()
@@ -120,18 +123,75 @@ public class GameManager : MonoBehaviour
         else return             LevelDefinitions.ALL_LEVELS[nextIndex];
     }
 
+    //public void SaveGame()
+    //{
+    //    string dir = Application.persistentDataPath + SAVE_DIRECTORY;
+
+    //    if (!Directory.Exists(dir))
+    //        Directory.CreateDirectory(dir);
+
+    //    string json = JsonUtility.ToJson(saveData, true);
+
+    //    File.WriteAllText(dir + FILE_NAME, json);
+
+    //    Debug.Log("Game Saved to " + dir + FILE_NAME);
+
+    //    NewSave();
+    //}
+
     public void SaveGame()
     {
+        Dictionary<string, object>  finalData   = new Dictionary<string, object>();
+        List<object> levelProgress              = new List<object>();
+        List<object> secretProgress             = new List<object>();
+
+        foreach (KeyValuePair<LevelCategory, Dictionary<int, List<bool>>> pair in SaveData.LevelProgress)
+        {
+            Dictionary<string, object> catData  = new Dictionary<string, object>();
+
+            catData["Category"]                 = (int)pair.Key;
+
+            List<object> progress               = new List<object>();
+
+            foreach (KeyValuePair<int, List<bool>> progPair in pair.Value)
+            {
+                Dictionary<string, object> progData = new Dictionary<string, object>();
+
+                progData["LevelNum"]            = progPair.Key;
+                progData["Progress"]            = progPair.Value;
+
+                progress.Add(progData);
+            }
+
+            catData["ProgressData"]             = progress;
+
+            levelProgress.Add(catData);
+        }
+
+        foreach(KeyValuePair<LevelCategory, Dictionary<int, bool>> pair in SaveData.SecretWordProgress)
+        {
+            Dictionary<string, object> catData  = new Dictionary<string, object>();
+
+            catData["Category"]                 = pair.Key;
+            catData["ProgressData"]             = pair.Value;
+
+            secretProgress.Add(catData);
+        }
+
+        finalData["CompletedDailyPuzzles"]      = SaveData.CompletedDailyPuzzles;
+        finalData["TodaysDailyProgress"]        = SaveData.TodaysDailyProgress;
+        finalData["DailyPuzzleTimeInSeconds"]   = SaveData.DailyPuzzleTimeInSeconds;
+        finalData["LevelProgress"]              = levelProgress;
+        finalData["SecretWordProgress"]         = secretProgress;
+
         string dir = Application.persistentDataPath + SAVE_DIRECTORY;
 
         if (!Directory.Exists(dir))
             Directory.CreateDirectory(dir);
 
-        string json = JsonUtility.ToJson(saveData, true);
+        string fileContents = Utilities.ConvertToJsonString(finalData);
 
-        File.WriteAllText(dir + FILE_NAME, json);
-
-        Debug.Log("Game Saved to " + dir + FILE_NAME);
+        File.WriteAllText(dir + FILE_NAME, fileContents);
     }
 
     #endregion
@@ -140,18 +200,52 @@ public class GameManager : MonoBehaviour
 
     private bool LoadSaveData()
     {
-        string filePath     = Application.persistentDataPath + SAVE_DIRECTORY + FILE_NAME;
+        //string filePath     = Application.persistentDataPath + SAVE_DIRECTORY + FILE_NAME;
 
-        Debug.Log("Loading Save From: " + filePath);
+        //Debug.Log("Loading Save From: " + filePath);
+
+        //if (File.Exists(filePath))
+        //{
+        //    string json     = File.ReadAllText(filePath);
+        //    saveData        = JsonUtility.FromJson<SaveFile>(json);
+
+        //    Debug.Log(json);
+
+        //    return true;
+        //}
+
+        //return false;
+
+        saveData        = new SaveFile();
+
+        string filePath = Application.persistentDataPath + SAVE_DIRECTORY + FILE_NAME;
 
         if (File.Exists(filePath))
         {
-            string json     = File.ReadAllText(filePath);
-            saveData        = JsonUtility.FromJson<SaveFile>(json);
+            string      contents        = File.ReadAllText(filePath);
+            JSONNode    json            = JSON.Parse(contents);
 
-            Debug.Log(json);
+            JSONArray   levelProgress   = json["LevelProgress"].AsArray;
 
-            return true;
+            for (int i = 0; i < levelProgress.Count; i++)
+            {
+                Debug.Log(levelProgress[i]);
+                Debug.Log(levelProgress[i]["Category"]);
+
+                LevelCategory category      = (LevelCategory)levelProgress[i]["Category"].AsInt;
+                JSONArray categoryProgress = levelProgress[i]["ProgressData"].AsArray;
+
+                for (int j = 0; j < categoryProgress.Count; j++)
+                {
+                    int levelNumber             = categoryProgress[j]["LevelNum"].AsInt;
+                    JSONArray catLevelProgress  = categoryProgress[j]["Progress"].AsArray;
+
+                    for (int k = 0; k < catLevelProgress.Count; k++)
+                    {
+                        SaveData.LevelProgress[category][levelNumber][k] = catLevelProgress[k];
+                    }
+                }
+            }
         }
 
         return false;
