@@ -16,19 +16,32 @@ public class GameManager : MonoBehaviour
 
     #region Private Consts
 
-    private const string SAVE_DIRECTORY             = "/SaveData/";
-    private const string FILE_NAME                  = "abc.sav";
+    private const string SAVE_DIRECTORY                     = "/SaveData/";
+    private const string FILE_NAME                          = "abc.sav";
+
+    #endregion
+
+    #region Inspector Variables
+
+    [SerializeField] private TextAsset textAsset_WordList;
 
     #endregion
 
     #region Private Variables
 
-    private float               time;
-    private Button              timerButton;
-    private bool                paused              = false;
-    private LevelCategory       currentCategory;
+    private float                       time;
+    private Button                      timerButton;
+    private bool                        paused              = false;
+    private LevelCategory               currentCategory;
 
-    private SaveFile            saveData;
+    private SaveFile                    saveData;
+
+    private Dictionary<string, byte>    wordList;
+
+    private System.Random               rand                = new System.Random();
+    private Stack<string>               preRandWords        = new Stack<string>();
+
+    private int stackCount;
 
     #endregion
 
@@ -52,20 +65,22 @@ public class GameManager : MonoBehaviour
     public void Start()
     {
         LoadSaveData();
+        SetAllWords();
+
+        PreloadRandomWords(1000);
     }
 
     public void Update()
     {
+        if (preRandWords.Count < 500)
+            PreloadRandomWords(2);
+
+        stackCount = preRandWords.Count;
+
         if (timerButton == null || paused)
             return;
 
-        time += Time.deltaTime;
-
-        //var minutes         = Mathf.FloorToInt(time / 60);
-        //var seconds         = Mathf.FloorToInt(time % 60);
-
-        //timerButton.text    = string.Format("{0:00} : {1:00}", minutes, seconds);
-
+        time                += Time.deltaTime;
         timerButton.text    = Utilities.GetTimerStringFromFloat(time);
 
         if (time > 0f)
@@ -190,6 +205,18 @@ public class GameManager : MonoBehaviour
         File.WriteAllText(dir + FILE_NAME, fileContents);
     }
 
+    public string GetWordFromList()
+    {
+        if (preRandWords.Count > 0)
+            return preRandWords.Pop();
+
+        PreloadRandomWords(50);
+
+        return preRandWords.Pop();
+
+        //return wordList.ElementAt(rand.Next(0, wordList.Count)).Key;
+    }
+
     #endregion
 
     #region Private Functions
@@ -245,7 +272,6 @@ public class GameManager : MonoBehaviour
 
             for (int i = 0; i < dailyProgress.Count; i++)
             {
-                //SaveData.TodaysDailyProgress[i] = dailyProgress[i];
                 finalDP.Add(dailyProgress[i]);
             }
 
@@ -253,17 +279,41 @@ public class GameManager : MonoBehaviour
 
             JSONArray   completeDailies         = json["CompletedDailyPuzzles"].AsArray;
 
-            //SaveData.CompletedDailyPuzzles      = new List<DateTime>();
             SaveData.CompletedDailyPuzzles      = new List<string>();
 
             for (int i = 0; i < completeDailies.Count; i++)
             {
-                //SaveData.CompletedDailyPuzzles.Add(DateTime.Parse(completeDailies[i].Value));
                 SaveData.CompletedDailyPuzzles.Add(completeDailies[i].Value);
             }
 
             SaveData.DailyPuzzleDate            = DateTime.Parse(json["DailyPuzzleDate"].Value);
             SaveData.DailyPuzzleTimeInSeconds   = json["DailyPuzzleTimeInSeconds"].AsFloat;
+        }
+    }
+
+    private void SetAllWords()
+    {
+        string[] allWords   = textAsset_WordList.text.Split('\n');
+        wordList            = new Dictionary<string, byte>();
+
+        for (int i = 0; i < allWords.Length; i++)
+        {
+            string word     = allWords[i].TrimEnd('\r', '\n');
+
+            if (!string.IsNullOrEmpty(word) && word.Length >= 3 && word.Length < 12)
+            {
+                wordList.Add(word, new byte());
+            }
+        }
+
+        Debug.Log(wordList.Count.ToString() + " Words Loaded Into Word List");
+    }
+
+    private void PreloadRandomWords(int num)
+    {
+        for (int i = 0; i < num; i++)
+        {
+            preRandWords.Push(wordList.ElementAt(rand.Next(0, wordList.Count)).Key);
         }
     }
 

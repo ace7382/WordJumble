@@ -133,3 +133,9 @@
     border-bottom-width: 10px;
     border-left-width: 10px;
 }
+
+.LoadingScreenRow {
+    flex-grow: 0;
+    flex-direction: row;
+    flex-shrink: 0;
+}

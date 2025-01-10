@@ -424,6 +424,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29ad17599750c4ab0b2d29fb50826979, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  textAsset_WordList: {fileID: 4900000, guid: fe6ec2294fdd34266915aed94159cb38, type: 3}
 --- !u!4 &1826350930
 Transform:
   m_ObjectHideFlags: 0
@@ -462,7 +463,7 @@ MonoBehaviour:
   - {r: 1, g: 0, b: 1, a: 1}
   - {r: 0.40993643, g: 0, b: 1, a: 1}
   - {r: 0, g: 1, b: 1, a: 1}
-  secretWordColor: {r: 0, g: 0, b: 0, a: 1}
+  secretWordColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   frameRateTarget: 60
 --- !u!114 &1826350932
 MonoBehaviour:

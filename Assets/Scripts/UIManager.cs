@@ -67,6 +67,7 @@ public class UIManager : MonoBehaviour
 
     public const string GLOBAL_STYLE__TILE_SELECTED_CLASS           = "TileSelected";
     public const string GLOBAL_STYLE__TILE_SELECTED_LETTER_CLASS    = "TileSelectedLetter";
+    public const string GLOBAL_STYLE__LOADING_ROW_CLASS             = "LoadingScreenRow";
     public const int GLOBAL_STYLE__SMALL_WORD_BADGE_WORDS_FONT_SIZE = 35;
     public const int GLOBAL_STYLE__SMALL_WORD_BADGE_ICONS_FONT_SIZE = 20;
 

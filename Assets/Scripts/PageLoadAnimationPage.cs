@@ -10,11 +10,8 @@ public class PageLoadAnimationPage : Page
 {
     #region Private Variables
 
-    private const int           ROWS            = 20;
-    private const int           WORDS_IN_ROW    = 7;
-
-    private string[]            TEST_WORDS      = {"Briar", "Bucket", "Anvil", "Corsair", "Fish", "Smelt", "Abacus", "Another", "Prismatic"
-                                                    , "Alligators", "Janitorial", "Musk", "Turtle", "Bunny", "Jump", "Jack", "Atom", "Bombastic" };
+    private const float         MIN_BADGE_WIDTH = 300f;
+    private const float         ROW_HEIGHT      = 150f;
 
     private VisualElement[,]    wordBadges;
 
@@ -63,32 +60,12 @@ public class PageLoadAnimationPage : Page
 
         yield return new WaitForSeconds(.7f);
 
-        //////
-        //Level dailyLevel;
-
-        //string path = "Levels/Daily/"
-        //        + System.DateTime.Now.Year.ToString() + "/"
-        //        + System.DateTime.Now.Month.ToString() + "/"
-        //        + System.DateTime.Now.Day.ToString();
-
-        //Debug.Log("Daily Level Path: " + path);
-
-        //dailyLevel = Resources.Load<Level>(path);
-
-        //object[] args = new object[2];
-        //args[0] = true;
-        //args[1] = dailyLevel;
-        //////
-        ///
-
         PageManager.instance.CloseAllPagesUnderTop();
 
         var method  = typeof(PageManager).GetMethod("AddPageUnderTopPage");
         var refe    = method.MakeGenericMethod(pageTypeToLoad);
 
         refe.Invoke(PageManager.instance, new object[] { newPageArguments, true } );
-
-        //PageManager.instance.AddPageUnderTopPage<GamePage>(args);
 
         PageManager.instance.StartCoroutine(PageManager.instance.CloseTopPage());
     }
@@ -107,8 +84,6 @@ public class PageLoadAnimationPage : Page
 
             for (int i = 0; i < wordBadges.GetLength(0); i++)
             {
-                //wordBadges[i, i % 2 == 0 ? currentLeft : currentRight].SetVisibility(false);
-
                 VisualElement b = wordBadges[i, i % 2 == 0 ? currentLeft : currentRight];
 
 
@@ -156,35 +131,59 @@ public class PageLoadAnimationPage : Page
 
     private void SetupUI()
     {
-        VisualElement page  = uiDoc.rootVisualElement.Q<VisualElement>("Page");
-        System.Random rWord = new System.Random();
-        System.Random rIcon = new System.Random();
+        VisualElement page      = uiDoc.rootVisualElement.Q<VisualElement>("Page");
+        System.Random rIcon     = new System.Random();
 
-        wordBadges = new VisualElement[ROWS, WORDS_IN_ROW];
+        int badgesInRow         = Mathf.CeilToInt(Screen.width / MIN_BADGE_WIDTH) + 5;
+        int rowsNeeded          = Mathf.CeilToInt(Screen.height / ROW_HEIGHT) + 5;
 
-        for (int i = 0; i < wordBadges.GetLength(0); i++)
+        wordBadges              = new VisualElement[rowsNeeded, badgesInRow];
+
+        Stack<VisualElement>
+            preloadedBadges     = new Stack<VisualElement>(page.Children());
+
+        for (int i = 0; i < rowsNeeded; i++)
         {
-            for (int j = 0; j < wordBadges.GetLength(1); j++)
-            {
-                wordBadges[i, j] = page.ElementAt(i).ElementAt(j);
+            VisualElement row   = new VisualElement();
+            row.AddToClassList(UIManager.GLOBAL_STYLE__LOADING_ROW_CLASS);
 
-                wordBadges[i, j].Q<Label>("Word").text = TEST_WORDS[rWord.Next(0, TEST_WORDS.Length)].ToUpper();
+            for (int j = 0; j < badgesInRow; j++)
+            {
+                wordBadges[i, j]    = preloadedBadges.Count > 0 ?
+                                        preloadedBadges.Pop()
+                                        : UIManager.instance.SolvedWordTile.Instantiate();
+
+                wordBadges[i, j].Show();
+                wordBadges[i, j].Q<Label>("Word").text = GameManager.instance.GetWordFromList().ToUpper();
 
                 int lengthVal = rIcon.Next(0, UIManager.instance.WordColorMax);
 
                 wordBadges[i, j].Q<Label>("LengthCounter").text = new string(UIManager.WORD_LENGTH_INDICATOR_SYMBOL, lengthVal + 1).Aggregate(string.Empty, (c, i) => c + i + ' ').TrimEnd();
+                wordBadges[i, j].style.flexGrow = 1f;
+                wordBadges[i, j].style.flexShrink = 0f;
 
                 VisualElement badgeContainer = wordBadges[i, j].Q<VisualElement>("Container");
                 badgeContainer.SetColor(UIManager.instance.GetColor(lengthVal));
                 badgeContainer.style.flexGrow = 1f;
 
-                wordBadges[i, j].ElementAt(0).SetMargins(1f);
+                wordBadges[i, j].ElementAt(0).SetMargins(0f);
                 wordBadges[i, j].SetVisibility(false);
                 wordBadges[i, j].transform.scale = Vector3.zero;
+
+                row.Add(wordBadges[i, j]);
             }
+
+            page.Add(row);
         }
 
+        if (wordBadges.Length < 25)
+        {
+            for (int i = 24; i >= wordBadges.Length; i--)
+                page.ElementAt(i).Hide();
+        }
 
+        Debug.Log("Style: width - " + page.style.width + " height - " + page.style.height);
+        Debug.Log("ResStyle: width - " + page.resolvedStyle.width + " height - " + page.resolvedStyle.height);
     }
 
     private void RegisterCallbacksAndEvents()
