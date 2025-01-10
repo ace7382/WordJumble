@@ -76,6 +76,9 @@ public class GamePage : Page
 
         RemoveListeners();
 
+        if (currentLevel.Category == LevelCategory.DAILY)
+            GameManager.instance.SaveData.DailyPuzzleDate = PlayFabManager.instance.ServerDate;
+
         GameManager.instance.SaveGame();
     }
 

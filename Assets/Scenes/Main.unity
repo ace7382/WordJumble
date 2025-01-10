@@ -453,7 +453,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   letterTile: {fileID: 9197481963319205126, guid: cf05cf2274c1f462bb679059ab6b23b9, type: 3}
   solvedWordTile: {fileID: 9197481963319205126, guid: c1202a53127e749dfa3d5fbde9ae1b32, type: 3}
-  levelTile: {fileID: 9197481963319205126, guid: 6fd50c983c78e401d9f451f09e73c1e1, type: 3}
   levelBadge: {fileID: 9197481963319205126, guid: 0a62f2affe548472688ce7013b3359f4, type: 3}
   solvedWordColors:
   - {r: 0.83921576, g: 0.15294118, b: 0.15294118, a: 1}
@@ -462,7 +461,8 @@ MonoBehaviour:
   - {r: 0.003921569, g: 0.28235295, b: 0.43137258, a: 1}
   - {r: 1, g: 0, b: 1, a: 1}
   - {r: 0.40993643, g: 0, b: 1, a: 1}
-  secretWordColor: {r: 0.011764707, g: 1, b: 1, a: 1}
+  - {r: 0, g: 1, b: 1, a: 1}
+  secretWordColor: {r: 0, g: 0, b: 0, a: 1}
   frameRateTarget: 60
 --- !u!114 &1826350932
 MonoBehaviour:

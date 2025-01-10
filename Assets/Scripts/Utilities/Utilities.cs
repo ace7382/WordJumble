@@ -1,4 +1,5 @@
 using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,6 +14,11 @@ public static class Utilities
             int r = random.Next(i, array.Length);
             (array[r], array[i]) = (array[i], array[r]);
         }
+    }
+
+	public static string GetDateAsString(DateTime d)
+    {
+		return d.ToString("MM/dd/yyyy");
     }
 
 	public static string ConvertToJsonString(object data, bool addQuoteEscapes = false)

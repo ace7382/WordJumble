@@ -152,7 +152,7 @@ public class MainMenuPage : Page
         loadingLabel.Hide();
         dailyLevelButtonContainer.transform.scale = new Vector3(1f, 0f, 1f);
 
-        if (PlayFabManager.instance.DailyLevel == null)
+        if (PlayFabManager.instance.DailyLevel.IsNull)
         {
             ShowLoading();
         }

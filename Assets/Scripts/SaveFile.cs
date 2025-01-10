@@ -10,15 +10,17 @@ public class SaveFile
     public Dictionary<LevelCategory, Dictionary<int, List<bool>>>   LevelProgress;
     public Dictionary<LevelCategory, Dictionary<int, bool>>         SecretWordProgress;
     public List<bool>                                               TodaysDailyProgress;
-    public List<DateTime>                                           CompletedDailyPuzzles;
+    public List<string>                                             CompletedDailyPuzzles;
     public float                                                    DailyPuzzleTimeInSeconds    = 0f;
+    public DateTime                                                 DailyPuzzleDate;
 
     public SaveFile()
     {
         LevelProgress           = new Dictionary<LevelCategory, Dictionary<int, List<bool>>>();
         SecretWordProgress      = new Dictionary<LevelCategory, Dictionary<int, bool>>();
-        TodaysDailyProgress     = Enumerable.Repeat(false, 4).ToList();
-        CompletedDailyPuzzles   = new List<DateTime>();
+        TodaysDailyProgress     = Enumerable.Repeat(false, 10).ToList();
+        CompletedDailyPuzzles   = new List<string>();
+        DailyPuzzleDate         = new DateTime(1900, 01, 01);
 
         Dictionary<int, List<bool>> final = new Dictionary<int, List<bool>>();
         Dictionary<int, bool> secretFinal = new Dictionary<int, bool>();
@@ -55,7 +57,10 @@ public class SaveFile
 
     public bool IsLevelComplete_Daily(DateTime date)
     {
-        return CompletedDailyPuzzles.FindIndex(x => x.Date == date.Date) > -1;
+        string dateAsString = Utilities.GetDateAsString(date);
+
+        return CompletedDailyPuzzles.FindIndex(x => string.Equals(x, dateAsString)) > -1;
+        //return CompletedDailyPuzzles.FindIndex(x => x.Date == date.Date) > -1;
     }
 
     public bool IsLevelComplete_Daily()
@@ -104,7 +109,8 @@ public class SaveFile
         if (TodaysDailyProgress.Contains(false))
             return;
 
-        CompletedDailyPuzzles.Add(PlayFabManager.instance.ServerDate);
+        CompletedDailyPuzzles.Add(Utilities.GetDateAsString(PlayFabManager.instance.ServerDate));
+        //CompletedDailyPuzzles.Add(PlayFabManager.instance.ServerDate);
     }
 
     public void MarkSecretWordFound(NewLevel lev)

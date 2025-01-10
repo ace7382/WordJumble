@@ -21,6 +21,17 @@ public class NewLevel
     public List<string>     Words;
     public string           SecretWord;
 
+    public bool             IsNull          { get { return Category == LevelCategory.NULL; } }
+
+    public NewLevel()
+    {
+        Category            = LevelCategory.NULL;
+        Theme               = string.Empty;
+        LevelNumber         = -1;
+        Words               = new List<string>();
+        SecretWord          = string.Empty;
+    }
+
     public NewLevel(LevelCategory category, string theme, int levelNumber, List<string> words, string secretWord)
     {
         Category            = category;

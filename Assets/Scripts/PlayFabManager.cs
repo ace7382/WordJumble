@@ -22,7 +22,7 @@ public class PlayFabManager : MonoBehaviour
     #region Private Variables
 
     private DateTime    serverDate;
-    private NewLevel    dailyLevel = null;
+    private NewLevel    dailyLevel = new NewLevel();
 
     #endregion
 
@@ -110,7 +110,8 @@ public class PlayFabManager : MonoBehaviour
 
         dailyLevel              = new NewLevel(LevelCategory.DAILY, l.theme, -1, l.words, "");
 
-        GameManager.instance.SaveData.NewDay_ResetTimeAndFoundList();
+        if (GameManager.instance.SaveData.DailyPuzzleDate.Date != ServerDate.Date)
+            GameManager.instance.SaveData.NewDay_ResetTimeAndFoundList();
 
         this.PostNotification(Notifications.DAILY_PUZZLE_LOADED_FROM_SERVER);
     }

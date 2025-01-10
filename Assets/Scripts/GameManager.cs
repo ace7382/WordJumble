@@ -51,9 +51,6 @@ public class GameManager : MonoBehaviour
 
     public void Start()
     {
-        //if (!LoadSaveData())
-        //    saveData = new SaveFile();
-
         LoadSaveData();
     }
 
@@ -66,8 +63,7 @@ public class GameManager : MonoBehaviour
 
         var minutes         = time / 60;
         var seconds         = time % 60;
-        //var fraction        = (time * 100) % 100;
-        //timerButton.text    = string.Format("{0:00} : {1:00} : {2:000}", minutes, seconds, fraction);
+
         timerButton.text    = string.Format("{0:00} : {1:00}", minutes, seconds);
 
         if (time > 0f)
@@ -123,22 +119,6 @@ public class GameManager : MonoBehaviour
         else return             LevelDefinitions.ALL_LEVELS[nextIndex];
     }
 
-    //public void SaveGame()
-    //{
-    //    string dir = Application.persistentDataPath + SAVE_DIRECTORY;
-
-    //    if (!Directory.Exists(dir))
-    //        Directory.CreateDirectory(dir);
-
-    //    string json = JsonUtility.ToJson(saveData, true);
-
-    //    File.WriteAllText(dir + FILE_NAME, json);
-
-    //    Debug.Log("Game Saved to " + dir + FILE_NAME);
-
-    //    NewSave();
-    //}
-
     public void SaveGame()
     {
         Dictionary<string, object>  finalData   = new Dictionary<string, object>();
@@ -172,8 +152,21 @@ public class GameManager : MonoBehaviour
         {
             Dictionary<string, object> catData  = new Dictionary<string, object>();
 
-            catData["Category"]                 = pair.Key;
-            catData["ProgressData"]             = pair.Value;
+            catData["Category"]                 = (int)pair.Key;
+
+            List<object> progress               = new List<object>();
+
+            foreach (KeyValuePair<int, bool> progPair in pair.Value)
+            {
+                Dictionary<string, object> progData = new Dictionary<string, object>();
+
+                progData["LevelNum"]            = progPair.Key;
+                progData["Progress"]            = progPair.Value;
+
+                progress.Add(progData);
+            }
+
+            catData["ProgressData"]             = progress;
 
             secretProgress.Add(catData);
         }
@@ -183,6 +176,7 @@ public class GameManager : MonoBehaviour
         finalData["DailyPuzzleTimeInSeconds"]   = SaveData.DailyPuzzleTimeInSeconds;
         finalData["LevelProgress"]              = levelProgress;
         finalData["SecretWordProgress"]         = secretProgress;
+        finalData["DailyPuzzleDate"]            = Utilities.GetDateAsString(SaveData.DailyPuzzleDate);
 
         string dir = Application.persistentDataPath + SAVE_DIRECTORY;
 
@@ -198,42 +192,23 @@ public class GameManager : MonoBehaviour
 
     #region Private Functions
 
-    private bool LoadSaveData()
+    private void LoadSaveData()
     {
-        //string filePath     = Application.persistentDataPath + SAVE_DIRECTORY + FILE_NAME;
-
-        //Debug.Log("Loading Save From: " + filePath);
-
-        //if (File.Exists(filePath))
-        //{
-        //    string json     = File.ReadAllText(filePath);
-        //    saveData        = JsonUtility.FromJson<SaveFile>(json);
-
-        //    Debug.Log(json);
-
-        //    return true;
-        //}
-
-        //return false;
-
         saveData        = new SaveFile();
 
         string filePath = Application.persistentDataPath + SAVE_DIRECTORY + FILE_NAME;
 
         if (File.Exists(filePath))
         {
-            string      contents        = File.ReadAllText(filePath);
-            JSONNode    json            = JSON.Parse(contents);
+            string      contents                = File.ReadAllText(filePath);
+            JSONNode    json                    = JSON.Parse(contents);
 
-            JSONArray   levelProgress   = json["LevelProgress"].AsArray;
+            JSONArray   levelProgress           = json["LevelProgress"].AsArray;
 
             for (int i = 0; i < levelProgress.Count; i++)
             {
-                Debug.Log(levelProgress[i]);
-                Debug.Log(levelProgress[i]["Category"]);
-
-                LevelCategory category      = (LevelCategory)levelProgress[i]["Category"].AsInt;
-                JSONArray categoryProgress = levelProgress[i]["ProgressData"].AsArray;
+                LevelCategory category          = (LevelCategory)levelProgress[i]["Category"].AsInt;
+                JSONArray categoryProgress      = levelProgress[i]["ProgressData"].AsArray;
 
                 for (int j = 0; j < categoryProgress.Count; j++)
                 {
@@ -246,9 +221,48 @@ public class GameManager : MonoBehaviour
                     }
                 }
             }
-        }
 
-        return false;
+            JSONArray   secretProgress  = json["SecretWordProgress"].AsArray;
+
+            for (int i = 0; i < secretProgress.Count; i++)
+            {
+                LevelCategory category          = (LevelCategory)secretProgress[i]["Category"].AsInt;
+                JSONArray categoryProgress      = secretProgress[i]["ProgressData"].AsArray;
+
+                for (int j = 0; j < categoryProgress.Count; j++)
+                {
+                    int levelNum                = categoryProgress[j]["LevelNum"].AsInt;
+                    bool catLevelProgress       = categoryProgress[j]["Progress"].AsBool;
+
+                    SaveData.SecretWordProgress[category][levelNum] = catLevelProgress;
+                }
+            }
+
+            JSONArray   dailyProgress           = json["TodaysDailyProgress"].AsArray;
+            List<bool>  finalDP                 = new List<bool>();
+
+            for (int i = 0; i < dailyProgress.Count; i++)
+            {
+                //SaveData.TodaysDailyProgress[i] = dailyProgress[i];
+                finalDP.Add(dailyProgress[i]);
+            }
+
+            SaveData.TodaysDailyProgress        = finalDP;
+
+            JSONArray   completeDailies         = json["CompletedDailyPuzzles"].AsArray;
+
+            //SaveData.CompletedDailyPuzzles      = new List<DateTime>();
+            SaveData.CompletedDailyPuzzles      = new List<string>();
+
+            for (int i = 0; i < completeDailies.Count; i++)
+            {
+                //SaveData.CompletedDailyPuzzles.Add(DateTime.Parse(completeDailies[i].Value));
+                SaveData.CompletedDailyPuzzles.Add(completeDailies[i].Value);
+            }
+
+            SaveData.DailyPuzzleDate            = DateTime.Parse(json["DailyPuzzleDate"].Value);
+            SaveData.DailyPuzzleTimeInSeconds   = json["DailyPuzzleTimeInSeconds"].AsFloat;
+        }
     }
 
     #endregion
