@@ -43,13 +43,6 @@ public class MainMenuPage : Page
     {
         Sequence s = DOTween.Sequence();
 
-        //Tween titleFlyIn = DOTween.To(
-        //    () => titleContainer.transform.position
-        //    , x => titleContainer.transform.position = x
-        //    , titleContainerPosition
-        //    , animInTime
-        //).SetEase(Ease.InSine);
-
         Tween titleFlyIn = DOTween.To(
             () => titleContainer.resolvedStyle.translate.y
             , newY => titleContainer.style.translate = new Translate(new Length(0f), new Length(newY), 0f)
@@ -136,10 +129,6 @@ public class MainMenuPage : Page
         title                       = uiDoc.rootVisualElement.Q<Label>(UIManager.MAIN_MENU_PAGE__TITLE_NAME);
         subtitle                    = uiDoc.rootVisualElement.Q<Label>(UIManager.MAIN_MENU_PAGE__SUBTITLE_NAME);
 
-        //titleContainerPosition      = titleContainer.transform.position;
-        //titleContainer.transform
-        //    .position               = new Vector3(titleContainerPosition.x, -200f, titleContainerPosition.z);
-
         beginnerButton              = uiDoc.rootVisualElement.Q<Button>(UIManager.MAIN_MENU_PAGE__BEGINNER_BUTTON_NAME);
         originalButton              = uiDoc.rootVisualElement.Q<Button>(UIManager.MAIN_MENU_PAGE__ORIGINAL_BUTTON_NAME);
         fiveWordButton              = uiDoc.rootVisualElement.Q<Button>(UIManager.MAIN_MENU_PAGE__5_WORDS_BUTTON_NAME);
@@ -184,6 +173,9 @@ public class MainMenuPage : Page
 
     private void SetupDailyJumblieButton()
     {
+        dailyJumblieLabel.text      = "Daily Jumblie - " + PlayFabManager.instance.ServerDate.ToString("M/d/yyyy");
+        dailyJumblieLabel.Show();
+
         VisualElement levelBadge    = UIManager.instance.LevelBadge.Instantiate();
         LevelBadge controller       = new LevelBadge(levelBadge, PlayFabManager.instance.DailyLevel);
 

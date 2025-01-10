@@ -98,9 +98,10 @@ public class LevelBadge
         {
             Label dailyStatusLabel      = root.Q<Label>(UIManager.LEVEL_SELECT_BADGE__DAILY_STATUS_LABEL_NAME);
 
-            var minutes                 = GameManager.instance.SaveData.DailyPuzzleTimeInSeconds / 60;
-            var seconds                 = GameManager.instance.SaveData.DailyPuzzleTimeInSeconds % 60;
-            string timeString           = string.Format("{0:00} : {1:00}", minutes, seconds);
+            //var minutes                 = GameManager.instance.SaveData.DailyPuzzleTimeInSeconds / 60;
+            //var seconds                 = GameManager.instance.SaveData.DailyPuzzleTimeInSeconds % 60;
+            //string timeString           = string.Format("{0:00} : {1:00}", minutes, seconds);
+            string timeString           = Utilities.GetTimerStringFromFloat(GameManager.instance.SaveData.DailyPuzzleTimeInSeconds);
 
             if (GameManager.instance.SaveData.IsLevelComplete_Daily(PlayFabManager.instance.ServerDate))
             {

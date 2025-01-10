@@ -21,6 +21,14 @@ public static class Utilities
 		return d.ToString("MM/dd/yyyy");
     }
 
+	public static string GetTimerStringFromFloat(float seconds)
+    {
+		var mins = Mathf.FloorToInt(seconds / 60);
+		var secs = Mathf.FloorToInt(seconds % 60);
+
+		return string.Format("{0:00} : {1:00}", mins, secs);
+	}
+
 	public static string ConvertToJsonString(object data, bool addQuoteEscapes = false)
 	{
 		string jsonString = "";

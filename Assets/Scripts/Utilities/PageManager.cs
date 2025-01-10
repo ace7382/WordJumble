@@ -95,12 +95,6 @@ public class PageManager : MonoBehaviour
     {
         Page outgoingPage = stack.Cast<DictionaryEntry>().ElementAt(stack.Count - 1).Key as Page;
 
-        //if (animateOut)
-        //    yield return (stack.Cast<DictionaryEntry>().ElementAt(stack.Count - 1).Key as Page).AnimateOut();
-
-        //if (executeHideCall)
-        //    (stack.Cast<DictionaryEntry>().ElementAt(stack.Count - 1).Key as Page).HidePage();
-
         if (animateOut)
             yield return outgoingPage.AnimateOut();
 
