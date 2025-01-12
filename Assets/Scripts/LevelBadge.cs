@@ -17,6 +17,8 @@ public class LevelBadge
 
     private VisualElement   root;
 
+    private QuickButton     button;
+
     #endregion
 
     #region Constructor
@@ -124,7 +126,10 @@ public class LevelBadge
 
     public void RegisterOnClick(System.Action onClick)
     {
-        root.RegisterButtonStateVisualChanges(root.ElementAt(0), Color.white, true, Color.white);
+        button = new QuickButton(root.ElementAt(0), Color.white);
+        root.AddManipulator(button);
+
+        //root.RegisterButtonStateVisualChanges(root.ElementAt(0), Color.white, true, Color.white);
         root.RegisterCallback<ClickEvent>((_) => onClick.Invoke());
     }
 
