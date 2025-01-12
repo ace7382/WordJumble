@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour
     private System.Random               rand                = new System.Random();
     private Stack<string>               preRandWords        = new Stack<string>();
 
-    private int stackCount;
+    //private int stackCount;
 
     #endregion
 
@@ -75,7 +75,7 @@ public class GameManager : MonoBehaviour
         if (preRandWords.Count < 500)
             PreloadRandomWords(2);
 
-        stackCount = preRandWords.Count;
+        //stackCount = preRandWords.Count;
 
         if (timerButton == null || paused)
             return;

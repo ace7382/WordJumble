@@ -24,16 +24,20 @@ public class MainMenuPage : Page
     private Label           loadingLabel;
     private Label           dailyJumblieLabel;
 
-    private Button          beginnerButton;
-    private Button          originalButton;
-    private Button          fiveWordButton;
-    private Button          sixWordButton;
+    private VisualElement   menuContainer;
+    private VisualElement   redButton;
+    private VisualElement   yellowButton;
+    private VisualElement   blueButton;
+    private VisualElement   greenButton;
+
+    private QuickButton     redQB;
+    private QuickButton     yellowQB;
+    private QuickButton     blueQB;
+    private QuickButton     greenQB;
 
     private VisualElement   titleContainer;
     private Label           title;
     private Label           subtitle;
-
-    private Vector3         titleContainerPosition;
 
     #endregion
 
@@ -83,16 +87,115 @@ public class MainMenuPage : Page
 
         s.Join(lineGrow);
 
+        //Tween rotateMenu = DOTween.To(
+        //    () => menuContainer.style.rotate.value.angle.value
+        //    , x => menuContainer.style.rotate = new StyleRotate(new Rotate(new Angle(x)))
+        //    , 360f
+        //    , animInTime
+        //).SetEase(Ease.InSine);
+
+        redButton.transform.scale = Vector3.zero;
+        blueButton.transform.scale = Vector3.zero;
+        yellowButton.transform.scale = Vector3.zero;
+        greenButton.transform.scale = Vector3.zero;
+
+        Tween redIn = DOTween.To(
+            () => redButton.transform.scale
+            , x => redButton.transform.scale = x
+            , Vector3.one
+            , secAnimInTime
+        ).SetEase(Ease.OutBack);
+
+        Tween blueIn = DOTween.To(
+            () => blueButton.transform.scale
+            , x => blueButton.transform.scale = x
+            , Vector3.one
+            , secAnimInTime
+        ).SetEase(Ease.OutBack);
+
+        Tween yellowIn = DOTween.To(
+            () => yellowButton.transform.scale
+            , x => yellowButton.transform.scale = x
+            , Vector3.one
+            , secAnimInTime
+        ).SetEase(Ease.OutBack);
+
+        Tween greenIn = DOTween.To(
+            () => greenButton.transform.scale
+            , x => greenButton.transform.scale = x
+            , Vector3.one
+            , secAnimInTime
+        ).SetEase(Ease.OutBack);
+
+        System.Random r = new System.Random();
+
+        s.Insert((float)r.NextDouble() * .8f * animInTime, redIn);
+        s.Insert((float)r.NextDouble() * .8f * animInTime, yellowIn);
+        s.Insert((float)r.NextDouble() * .8f * animInTime, blueIn);
+        s.Insert((float)r.NextDouble() * .8f * animInTime, greenIn);
+
         yield return s.Play().WaitForCompletion();
 
         canClick = true;
+
+        redQB = new QuickButton(redButton, UIManager.instance.GetColor(0));
+        redButton.AddManipulator(redQB);
+
+        blueQB = new QuickButton(blueButton, UIManager.instance.GetColor(3));
+        blueButton.AddManipulator(blueQB);
+
+        greenQB = new QuickButton(greenButton, UIManager.instance.GetColor(2));
+        greenButton.AddManipulator(greenQB);
+
+        yellowQB = new QuickButton(yellowButton, UIManager.instance.GetColor(1));
+        yellowButton.AddManipulator(yellowQB);
     }
 
     public override IEnumerator AnimateOut()
     {
         canClick = false;
 
-        return null;
+        redButton.RemoveManipulator(redQB);
+        blueButton.RemoveManipulator(blueQB);
+        greenButton.RemoveManipulator(greenQB);
+        yellowButton.RemoveManipulator(yellowQB);
+
+        Sequence s = DOTween.Sequence();
+
+        Tween redOut = DOTween.To(
+            () => redButton.transform.scale
+            , x => redButton.transform.scale = x
+            , Vector3.zero
+            , secAnimInTime
+        ).SetEase(Ease.InBack);
+
+        Tween blueOut = DOTween.To(
+            () => blueButton.transform.scale
+            , x => blueButton.transform.scale = x
+            , Vector3.zero
+            , secAnimInTime
+        ).SetEase(Ease.InBack);
+
+        Tween yellowOut = DOTween.To(
+            () => yellowButton.transform.scale
+            , x => yellowButton.transform.scale = x
+            , Vector3.zero
+            , secAnimInTime
+        ).SetEase(Ease.InBack);
+
+        Tween greenOut = DOTween.To(
+            () => greenButton.transform.scale
+            , x => greenButton.transform.scale = x
+            , Vector3.zero
+            , secAnimInTime
+        ).SetEase(Ease.InBack);
+
+        s.Join(redOut);
+        s.Join(blueOut);
+        s.Join(greenOut);
+        s.Join(yellowOut);
+
+        yield return s.Play().WaitForCompletion();
     }
 
     public override void HidePage()
@@ -129,10 +232,12 @@ public class MainMenuPage : Page
         title                       = uiDoc.rootVisualElement.Q<Label>(UIManager.MAIN_MENU_PAGE__TITLE_NAME);
         subtitle                    = uiDoc.rootVisualElement.Q<Label>(UIManager.MAIN_MENU_PAGE__SUBTITLE_NAME);
 
-        beginnerButton              = uiDoc.rootVisualElement.Q<Button>(UIManager.MAIN_MENU_PAGE__BEGINNER_BUTTON_NAME);
-        originalButton              = uiDoc.rootVisualElement.Q<Button>(UIManager.MAIN_MENU_PAGE__ORIGINAL_BUTTON_NAME);
-        fiveWordButton              = uiDoc.rootVisualElement.Q<Button>(UIManager.MAIN_MENU_PAGE__5_WORDS_BUTTON_NAME);
-        sixWordButton               = uiDoc.rootVisualElement.Q<Button>(UIManager.MAIN_MENU_PAGE__6_WORDS_BUTTON_NAME);
+        menuContainer               = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.MAIN_MENU_PAGE__MENU_CONTAINER_NAME);
+        redButton                   = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.MAIN_MENU_PAGE__RED_BUTTON_NAME);
+        yellowButton                = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.MAIN_MENU_PAGE__YELLOW_BUTTON_NAME);
+        blueButton                  = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.MAIN_MENU_PAGE__BLUE_BUTTON_NAME);
+        greenButton                 = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.MAIN_MENU_PAGE__GREEN_BUTTON_NAME);
+
         dailyLevelButtonContainer   = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.MAIN_MENU_PAGE__DAILY_CONTAINER_NAME);
         dailyJumblieLabel           = uiDoc.rootVisualElement.Q<Label>(UIManager.MAIN_MENU_PAGE__DAILY_LABEL_NAME);
         loadingLabel                = uiDoc.rootVisualElement.Q<Label>(UIManager.MAIN_MENU_PAGE__LOADING_LABEL_NAME);
@@ -197,18 +302,15 @@ public class MainMenuPage : Page
 
     private void RegisterCallbacksAndEvents()
     {
-        beginnerButton.clicked  += () => GoToLevelSelect(LevelCategory.BEGINNER);
-        originalButton.clicked  += () => GoToLevelSelect(LevelCategory.ORIGINAL);
-        fiveWordButton.clicked  += () => GoToLevelSelect(LevelCategory.FIVE_WORD);
-        sixWordButton.clicked   += () => GoToLevelSelect(LevelCategory.SIX_WORD);
+        redButton.RegisterCallback<ClickEvent>(_ => GoToLevelSelect(LevelCategory.BEGINNER));
+        greenButton.RegisterCallback<ClickEvent>(_ => GoToLevelSelect(LevelCategory.ORIGINAL));
+        blueButton.RegisterCallback<ClickEvent>(_ => { });
+        yellowButton.RegisterCallback<ClickEvent>(_ => { });
     }
 
     private void UnregisterCallbacksAndEvents()
     {
-        beginnerButton.clicked  -= () => GoToLevelSelect(LevelCategory.BEGINNER);
-        originalButton.clicked  -= () => GoToLevelSelect(LevelCategory.ORIGINAL);
-        fiveWordButton.clicked  -= () => GoToLevelSelect(LevelCategory.FIVE_WORD);
-        sixWordButton.clicked   -= () => GoToLevelSelect(LevelCategory.SIX_WORD);
+
     }
 
     private void GoToLevelSelect(LevelCategory category)

@@ -181,9 +181,6 @@ public class PageLoadAnimationPage : Page
             for (int i = 24; i >= wordBadges.Length; i--)
                 page.ElementAt(i).Hide();
         }
-
-        Debug.Log("Style: width - " + page.style.width + " height - " + page.style.height);
-        Debug.Log("ResStyle: width - " + page.resolvedStyle.width + " height - " + page.resolvedStyle.height);
     }
 
     private void RegisterCallbacksAndEvents()

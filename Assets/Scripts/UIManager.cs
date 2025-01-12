@@ -18,10 +18,11 @@ public class UIManager : MonoBehaviour
     public const string MAIN_MENU_PAGE__TITLE_NAME                  = "Title";
     public const string MAIN_MENU_PAGE__SUBTITLE_NAME               = "Subtitle";
     public const string MAIN_MENU_PAGE__DAILY_CONTAINER_NAME        = "DailyContainer";
-    public const string MAIN_MENU_PAGE__BEGINNER_BUTTON_NAME        = "BeginnerButton";
-    public const string MAIN_MENU_PAGE__ORIGINAL_BUTTON_NAME        = "OriginalButton";
-    public const string MAIN_MENU_PAGE__5_WORDS_BUTTON_NAME         = "FiveWordButton";
-    public const string MAIN_MENU_PAGE__6_WORDS_BUTTON_NAME         = "SixWordButton";
+    public const string MAIN_MENU_PAGE__MENU_CONTAINER_NAME         = "MenuContainer";
+    public const string MAIN_MENU_PAGE__RED_BUTTON_NAME             = "RedButton";
+    public const string MAIN_MENU_PAGE__BLUE_BUTTON_NAME            = "BlueButton";
+    public const string MAIN_MENU_PAGE__GREEN_BUTTON_NAME           = "GreenButton";
+    public const string MAIN_MENU_PAGE__YELLOW_BUTTON_NAME          = "YellowButton";
     public const string MAIN_MENU_PAGE__DAILY_LABEL_NAME            = "DailyLabel";
     public const string MAIN_MENU_PAGE__LOADING_LABEL_NAME          = "LoadingLabel";
 

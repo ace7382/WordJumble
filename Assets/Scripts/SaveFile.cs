@@ -73,9 +73,6 @@ public class SaveFile
         if (cat == LevelCategory.DAILY)
             return IsWordFound_Daily(wordIndex);
 
-        Debug.Log("Looking for Level Cat: " + cat + ", Level #: " + levNum + ", word #: " + wordIndex);
-        Debug.Log("Number of levels in Cat: " + LevelProgress[cat].Count);
-
         return LevelProgress[cat][levNum][wordIndex];
     }
 

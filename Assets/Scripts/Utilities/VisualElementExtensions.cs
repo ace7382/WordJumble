@@ -115,16 +115,41 @@ public static class VisualElementExtensions
         if(bottomRight) value.style.borderBottomRightRadius   = r;
     }
 
+    private static EventCallback<PointerOverEvent>  buttonOver;
+    private static EventCallback<PointerOutEvent>   buttonOut;
+    private static EventCallback<PointerDownEvent>  buttonDown;
+    private static EventCallback<PointerUpEvent>    buttonUp;
+    private static EventCallback<PointerLeaveEvent> buttonLeave;
+
+    private static Clickable clickable;
+
     public static void RegisterButtonStateVisualChanges(this VisualElement ve, VisualElement bg, Color neutralStateColor, bool useDefaultHighlight, Color highlightColor)
     {
         if (useDefaultHighlight)
             highlightColor = new Color(.886f, .886f, .886f);
 
-        ve.RegisterCallback<PointerOverEvent>((_)   => { bg.style.backgroundColor = neutralStateColor * highlightColor; });
-        ve.RegisterCallback<PointerOutEvent>((_)    => { bg.style.backgroundColor = neutralStateColor; });
-        ve.RegisterCallback<PointerDownEvent>((_)   => { bg.transform.scale = new Vector3(.95f, .95f, 1f); });
-        ve.RegisterCallback<PointerUpEvent>((_)     => { bg.transform.scale = Vector3.one; });
-        ve.RegisterCallback<PointerLeaveEvent>((_)  => { bg.transform.scale = Vector3.one; });
+        buttonOver = (_) => { bg.style.backgroundColor = neutralStateColor * highlightColor; };
+        buttonOut = (_) => { bg.style.backgroundColor = neutralStateColor; };
+        buttonDown = (_) => { bg.transform.scale = new Vector3(.95f, .95f, 1f); };
+        buttonUp = (_) => { bg.transform.scale = Vector3.one; };
+        buttonLeave = (_) => { bg.transform.scale = Vector3.one; };
+
+        ve.RegisterCallback<PointerOverEvent>(buttonOver);
+        ve.RegisterCallback<PointerOutEvent>(buttonOut);
+        ve.RegisterCallback<PointerDownEvent>(buttonDown);
+        ve.RegisterCallback<PointerUpEvent>(buttonUp);
+        ve.RegisterCallback<PointerLeaveEvent>(buttonLeave);
+    }
+
+    public static void UnregisterButtonStateVisualChange(this VisualElement ve)
+    {
+        ve.UnregisterCallback(buttonOver);
+        ve.UnregisterCallback(buttonOut);
+        ve.UnregisterCallback(buttonDown);
+        ve.UnregisterCallback(buttonUp);
+        ve.UnregisterCallback(buttonLeave);
+
+        Debug.Log("Unregistered");
     }
 
     public static void ScaleToFit(this VisualElement ve)
