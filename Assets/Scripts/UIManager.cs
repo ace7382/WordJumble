@@ -43,6 +43,12 @@ public class UIManager : MonoBehaviour
     public const string LEVEL_SELECT_BADGE__DAILY_STATUS_LABEL_NAME = "DailyPuzzleStatusLabel";
     public const string LEVEL_SELECT_BADGE__ROW_2_NAME              = "Row2";
 
+    public const string MINI_BADGE__NAME                            = "MiniBadge";
+    public const string MINI_BADGE__COMPLETE_ICON_NAME              = "MB_CompleteIcon";
+    public const string MINI_BADGE__SECRET_ICON_NAME                = "MB_SecretIcon";
+    public const string MINI_BADGE__WORDBADGE_NAME                  = "MB_";
+    public const string MINI_BADGE__LEVEL_NUM_NAME                  = "MB_LevelNum";
+
     public const string GAME_PAGE__TILE_CONTAINER_NAME              = "TileContainer";
     public const string GAME_PAGE__SUBMITTED_WORD_NAME              = "SubmittedWord";
     public const string GAME_PAGE__SUBMIT_BUTTON_NAME               = "SubmitButton";

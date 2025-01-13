@@ -1,10 +1,6 @@
 .Tile {
-    width: 125px;
-    height: 125px;
-    max-width: 125px;
-    max-height: 125px;
-    min-width: 125px;
-    min-height: 125px;
+    width: 140px;
+    height: 140px;
     flex-shrink: 0;
     background-color: rgb(255, 255, 255);
     opacity: 1;
@@ -52,7 +48,7 @@
 .TileLetter {
     -unity-font: url('project://database/Assets/UI/Quicksand-Bold.ttf?fileID=12800000&guid=27fa21bd2f1ba4527b61daeb901e9520&type=3#Quicksand-Bold');
     -unity-font-definition: initial;
-    font-size: 70px;
+    font-size: 85px;
     -unity-font-style: bold;
     margin-top: 0;
     margin-right: 0;

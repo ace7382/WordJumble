@@ -304,7 +304,7 @@ public class MainMenuPage : Page
     {
         redButton.RegisterCallback<ClickEvent>(_ => GoToLevelSelect(LevelCategory.BEGINNER));
         greenButton.RegisterCallback<ClickEvent>(_ => GoToLevelSelect(LevelCategory.ORIGINAL));
-        blueButton.RegisterCallback<ClickEvent>(_ => { });
+        blueButton.RegisterCallback<ClickEvent>(_ => GoToLevelSelect(LevelCategory.ADVANCED));
         yellowButton.RegisterCallback<ClickEvent>(_ => { });
     }
 

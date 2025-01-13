@@ -18,7 +18,7 @@ public class LevelSelectPage : Page
     private VisualElement   levelIconContainer;
     private Label           completeCounter;
     private Label           secretCounter;
-    private Label           backButton;
+    private VisualElement   backButton;
     private Label           hideCompletedButton;
 
     #endregion
@@ -67,10 +67,14 @@ public class LevelSelectPage : Page
         levelIconContainer  = uiDoc.rootVisualElement.Q<ScrollView>(UIManager.LEVEL_SELECT_PAGE__ICON_CONTAINER_NAME).contentContainer;
         completeCounter     = uiDoc.rootVisualElement.Q<Label>(UIManager.LEVEL_SELECT_PAGE__COMPLETE_COUNTER_NAME);
         secretCounter       = uiDoc.rootVisualElement.Q<Label>(UIManager.LEVEL_SELECT_PAGE__SECRET_COUNTER_NAME);
-        backButton          = uiDoc.rootVisualElement.Q<Label>(UIManager.LEVEL_SELECT_PAGE__BACK_BUTTON_NAME);
+        backButton          = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.LEVEL_SELECT_PAGE__BACK_BUTTON_NAME);
         hideCompletedButton = uiDoc.rootVisualElement.Q<Label>(UIManager.LEVEL_SELECT_PAGE__HIDE_COMP_BUTTON_NAME);
 
         titleLabel.text     = levelCat.Name();
+
+        levelIconContainer.style.flexWrap = Wrap.Wrap;
+        levelIconContainer.style.flexDirection = FlexDirection.Row;
+        levelIconContainer.style.justifyContent = Justify.SpaceAround;
 
         int completeCount   = 0;
         int secretCount     = 0;
@@ -78,7 +82,7 @@ public class LevelSelectPage : Page
         foreach (NewLevel level in levels)
         {
             VisualElement levelBadge    = UIManager.instance.LevelBadge.Instantiate();
-            LevelBadge controller       = new LevelBadge(levelBadge, level);
+            LevelBadge controller       = new LevelBadge(levelBadge, level, false);
             System.Action onClick       = delegate
                                         {
                                             LoadLevel(null, level);

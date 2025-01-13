@@ -51,4 +51,22 @@
             <ui:VisualElement name="Check" style="width: 50px; height: 50px; max-width: 50px; max-height: 50px; min-width: 50px; min-height: 50px; background-image: resource(&apos;Icons/Check&apos;);" />
         </ui:VisualElement>
     </ui:VisualElement>
+    <ui:VisualElement name="MiniBadge" style="flex-grow: 0; width: 250px; height: 250px; flex-shrink: 0; border-top-left-radius: 15px; border-top-right-radius: 15px; border-bottom-right-radius: 15px; border-bottom-left-radius: 15px; background-color: rgb(255, 255, 255); margin-top: 20px; margin-right: 20px; margin-bottom: 20px; margin-left: 20px;">
+        <ui:Label tabindex="-1" text="999" parse-escape-sequences="true" display-tooltip-when-elided="true" name="MB_LevelNum" style="margin-top: 15px; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; -unity-font: url(&apos;project://database/Assets/UI/Quicksand-Bold.ttf?fileID=12800000&amp;guid=27fa21bd2f1ba4527b61daeb901e9520&amp;type=3#Quicksand-Bold&apos;); -unity-font-definition: initial; font-size: 60px; -unity-text-align: upper-center; align-self: center; -unity-font-style: bold;" />
+        <ui:VisualElement name="MB_WordIconsRow1" style="flex-grow: 1; flex-direction: row; justify-content: space-around; align-items: center; margin-left: 15px; margin-right: 15px;">
+            <ui:VisualElement name="MB_1" style="background-color: rgb(255, 0, 0); width: 35px; height: 35px; flex-shrink: 0; border-top-left-radius: 50px; border-top-right-radius: 50px; border-bottom-right-radius: 50px; border-bottom-left-radius: 50px;" />
+            <ui:VisualElement name="MB_2" style="background-color: rgb(255, 0, 0); width: 35px; height: 35px; flex-shrink: 0; border-top-left-radius: 50px; border-top-right-radius: 50px; border-bottom-right-radius: 50px; border-bottom-left-radius: 50px;" />
+            <ui:VisualElement name="MB_3" style="background-color: rgb(255, 0, 0); width: 35px; height: 35px; flex-shrink: 0; border-top-left-radius: 50px; border-top-right-radius: 50px; border-bottom-right-radius: 50px; border-bottom-left-radius: 50px;" />
+            <ui:VisualElement name="MB_4" style="background-color: rgb(255, 0, 0); width: 35px; height: 35px; flex-shrink: 0; border-top-left-radius: 50px; border-top-right-radius: 50px; border-bottom-right-radius: 50px; border-bottom-left-radius: 50px;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="MB_WordIconsRow2" style="flex-grow: 1; flex-direction: row; justify-content: space-around; align-items: center; margin-left: 15px; margin-right: 15px;">
+            <ui:VisualElement name="MB_5" style="background-color: rgb(255, 0, 0); width: 35px; height: 35px; flex-shrink: 0; border-top-left-radius: 50px; border-top-right-radius: 50px; border-bottom-right-radius: 50px; border-bottom-left-radius: 50px;" />
+            <ui:VisualElement name="MB_6" style="background-color: rgb(255, 0, 0); width: 35px; height: 35px; flex-shrink: 0; border-top-left-radius: 50px; border-top-right-radius: 50px; border-bottom-right-radius: 50px; border-bottom-left-radius: 50px;" />
+            <ui:VisualElement name="MB_7" style="background-color: rgb(255, 0, 0); width: 35px; height: 35px; flex-shrink: 0; border-top-left-radius: 50px; border-top-right-radius: 50px; border-bottom-right-radius: 50px; border-bottom-left-radius: 50px;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="MB_WordIconsRow3" style="flex-grow: 1; flex-direction: row; justify-content: space-around; align-items: center; margin-left: 50px; margin-right: 50px;">
+            <ui:VisualElement name="MB_CompleteIcon" style="width: 35px; height: 35px; flex-shrink: 0; background-image: resource(&apos;Icons/Check&apos;); -unity-background-image-tint-color: rgb(0, 0, 0); -unity-background-scale-mode: stretch-to-fill; margin-top: -5px; margin-bottom: 0;" />
+            <ui:VisualElement name="MB_SecretIcon" style="width: 60px; height: 60px; flex-shrink: 0; background-image: resource(&apos;Icons/star&apos;); -unity-background-image-tint-color: rgb(46, 0, 0); -unity-background-scale-mode: stretch-to-fill; margin-top: -10px; margin-bottom: 0; margin-right: -10px;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
 </ui:UXML>

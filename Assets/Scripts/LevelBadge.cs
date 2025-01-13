@@ -19,14 +19,37 @@ public class LevelBadge
 
     private QuickButton     button;
 
+    private VisualElement   miniBadge;
+    private QuickButton     miniButton;
+
+    private bool            fullBadge;
+
+    #endregion
+
+    #region Private Properties
+
+    private bool            FullBadge
+    {
+        get { return fullBadge; }
+        set
+        {
+            fullBadge = value;
+            root.ElementAt(0).Show(fullBadge);
+            miniBadge.Show(!fullBadge);
+        }
+    }
     #endregion
 
     #region Constructor
 
-    public LevelBadge(VisualElement root, NewLevel level)
+    public LevelBadge(VisualElement root, NewLevel level, bool fullBadge = true)
     {
         this.root       = root;
+        miniBadge       = root.Q<VisualElement>(UIManager.MINI_BADGE__NAME);
+
         this.level      = level;
+
+        FullBadge       = fullBadge;
 
         Setup();
     }
@@ -37,20 +60,27 @@ public class LevelBadge
 
     private void Setup()
     {
-        root.Q<Label>(UIManager.LEVEL_SELECT_BADGE__THEME_NAME).text    = level.Theme;
+        miniBadge.Q<Label>(UIManager.MINI_BADGE__LEVEL_NUM_NAME)
+            .text                       = level.LevelNumber.ToString();
+
+        root.Q<Label>(UIManager.LEVEL_SELECT_BADGE__THEME_NAME)
+            .text                       = level.Theme;
 
         for (int i = 1; i <= MAX_BADGE_NUM; i++)
         {
-            VisualElement currentBadge = root.Q<VisualElement>(UIManager.LEVEL_SELECT_BADGE__WORDBADGE_NAME + i.ToString());
+            VisualElement currentBadge  = root.Q<VisualElement>(UIManager.LEVEL_SELECT_BADGE__WORDBADGE_NAME + i.ToString());
+            VisualElement currentMini   = miniBadge.Q<VisualElement>(UIManager.MINI_BADGE__WORDBADGE_NAME + i.ToString());
 
             if (level.Words.Count < i)
             {
                 currentBadge.SetVisibility(false);
+                currentMini.SetVisibility(false);
                 continue;
             }
 
+            bool isWordFound            = GameManager.instance.SaveData.IsWordFound(level.Category, level.LevelNumber, i - 1);
             currentBadge.style
-                .backgroundColor        = GameManager.instance.SaveData.IsWordFound(level.Category, level.LevelNumber, i - 1) ?
+                .backgroundColor        =  isWordFound ?
                                             UIManager.instance.GetColor(i - 1) :
                                             new Color(
                                                 UIManager.instance.GetColor(i - 1).r
@@ -58,23 +88,29 @@ public class LevelBadge
                                                 , UIManager.instance.GetColor(i - 1).b
                                                 , .4f
                                             );
+            currentMini.style
+                .backgroundColor        = currentBadge.style.backgroundColor;
 
             currentBadge.Q<Label>(UIManager.LEVEL_SELECT_BADGE__WORD_NAME)
-                .text                   = GameManager.instance.SaveData.IsWordFound(level.Category, level.LevelNumber, i - 1) ?
+                .text                   = isWordFound ?
                                             level.Words[i - 1].ToUpper() :
                                             UIManager.LEVEL_SELECT_BADGE__UNFOUND_WORD_NAME;
         }
 
         VisualElement secretBadge       = root.Q<VisualElement>(UIManager.LEVEL_SELECT_BADGE__SECRET_BADGE_NAME);
+        VisualElement miniSecret        = miniBadge.Q<VisualElement>(UIManager.MINI_BADGE__SECRET_ICON_NAME);
 
         if (level.Category == LevelCategory.DAILY)
         {
             secretBadge.SetVisibility(false);
+            miniBadge.SetVisibility(false);
         }
         else
         {
+            bool isSecretFound          = GameManager.instance.SaveData.IsSecretWordFound(level);
+
             secretBadge.style
-                .backgroundColor        = GameManager.instance.SaveData.IsSecretWordFound(level) ?
+                .backgroundColor        =  isSecretFound?
                                             UIManager.instance.GetColor(-1) :
                                             new Color(
                                                 UIManager.instance.GetColor(-1).r
@@ -83,10 +119,23 @@ public class LevelBadge
                                                 , .4f
                                             );
 
+            miniSecret.SetVisibility(isSecretFound);
+
             secretBadge.Q<Label>(UIManager.LEVEL_SELECT_BADGE__WORD_NAME)
-                .text                   = GameManager.instance.SaveData.IsSecretWordFound(level.Category, level.LevelNumber) ?
+                .text                   = isSecretFound ?
                                             level.SecretWord.ToUpper()
                                             : UIManager.LEVEL_SELECT_BADGE__UNFOUND_WORD_NAME;
+
+            VisualElement miniComplete  = miniBadge.Q<VisualElement>(UIManager.MINI_BADGE__COMPLETE_ICON_NAME);
+
+            bool isLevelComplete        = GameManager.instance.SaveData.IsLevelComplete(level);
+            miniComplete.SetVisibility(isLevelComplete);
+
+            if (GameManager.instance.SaveData.IsLevelComplete(level))
+            {
+                miniBadge.SetBorderColor(Color.black);
+                miniBadge.SetBorderWidth(8f);
+            }
         }
 
         if (level.Words.Count < 5 && string.IsNullOrEmpty(level.SecretWord))
@@ -99,10 +148,6 @@ public class LevelBadge
         else
         {
             Label dailyStatusLabel      = root.Q<Label>(UIManager.LEVEL_SELECT_BADGE__DAILY_STATUS_LABEL_NAME);
-
-            //var minutes                 = GameManager.instance.SaveData.DailyPuzzleTimeInSeconds / 60;
-            //var seconds                 = GameManager.instance.SaveData.DailyPuzzleTimeInSeconds % 60;
-            //string timeString           = string.Format("{0:00} : {1:00}", minutes, seconds);
             string timeString           = Utilities.GetTimerStringFromFloat(GameManager.instance.SaveData.DailyPuzzleTimeInSeconds);
 
             if (GameManager.instance.SaveData.IsLevelComplete_Daily(PlayFabManager.instance.ServerDate))
@@ -129,8 +174,12 @@ public class LevelBadge
         button = new QuickButton(root.ElementAt(0), Color.white);
         root.AddManipulator(button);
 
+        miniButton = new QuickButton(miniBadge, Color.white);
+        miniBadge.AddManipulator(miniButton);
+
         //root.RegisterButtonStateVisualChanges(root.ElementAt(0), Color.white, true, Color.white);
         root.RegisterCallback<ClickEvent>((_) => onClick.Invoke());
+        miniBadge.RegisterCallback<ClickEvent>((_) => onClick.Invoke());
     }
 
     #endregion
