@@ -32,6 +32,8 @@ public class UIManager : MonoBehaviour
     public const string LEVEL_SELECT_PAGE__SECRET_COUNTER_NAME      = "SecretWordCounter";
     public const string LEVEL_SELECT_PAGE__BACK_BUTTON_NAME         = "BackButton";
     public const string LEVEL_SELECT_PAGE__HIDE_COMP_BUTTON_NAME    = "HideCompletedButton";
+    public const string LEVEL_SELECT_PAGE__GRID_BUTTON_NAME         = "GridButton";
+    public const string LEVEL_SELECT_PAGE__LIST_BUTTON_NAME         = "ListButton";
 
     public const string LEVEL_SELECT_BADGE__THEME_NAME              = "ThemeLabel";
     public const string LEVEL_SELECT_BADGE__COMPLETE_ICON_NAME      = "CompletedIcon";

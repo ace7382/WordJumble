@@ -8,18 +8,21 @@ public class LevelSelectPage : Page
 {
     #region Private Variables
 
-    private bool            canClick;
-    private bool            showCompleted           = true;
+    private bool                canClick;
+    private bool                showCompleted           = true;
 
-    private LevelCategory   levelCat;
-    private List<NewLevel>  levels;
+    private LevelCategory       levelCat;
+    private List<NewLevel>      levels;
+    private List<LevelBadge>    badges;
 
-    private Label           titleLabel;
-    private VisualElement   levelIconContainer;
-    private Label           completeCounter;
-    private Label           secretCounter;
-    private VisualElement   backButton;
-    private Label           hideCompletedButton;
+    private Label               titleLabel;
+    private VisualElement       levelIconContainer;
+    private Label               completeCounter;
+    private Label               secretCounter;
+    private VisualElement       backButton;
+    private Label               hideCompletedButton;
+    private VisualElement       gridButton;
+    private VisualElement       listButton;
 
     #endregion
 
@@ -63,18 +66,23 @@ public class LevelSelectPage : Page
 
     private void SetupUI()
     {
+        badges              = new List<LevelBadge>();
+
         titleLabel          = uiDoc.rootVisualElement.Q<Label>(UIManager.LEVEL_SELECT_PAGE__TITLE_NAME);
         levelIconContainer  = uiDoc.rootVisualElement.Q<ScrollView>(UIManager.LEVEL_SELECT_PAGE__ICON_CONTAINER_NAME).contentContainer;
         completeCounter     = uiDoc.rootVisualElement.Q<Label>(UIManager.LEVEL_SELECT_PAGE__COMPLETE_COUNTER_NAME);
         secretCounter       = uiDoc.rootVisualElement.Q<Label>(UIManager.LEVEL_SELECT_PAGE__SECRET_COUNTER_NAME);
         backButton          = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.LEVEL_SELECT_PAGE__BACK_BUTTON_NAME);
         hideCompletedButton = uiDoc.rootVisualElement.Q<Label>(UIManager.LEVEL_SELECT_PAGE__HIDE_COMP_BUTTON_NAME);
+        gridButton          = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.LEVEL_SELECT_PAGE__GRID_BUTTON_NAME);
+        listButton          = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.LEVEL_SELECT_PAGE__LIST_BUTTON_NAME);
 
         titleLabel.text     = levelCat.Name();
 
-        levelIconContainer.style.flexWrap = Wrap.Wrap;
-        levelIconContainer.style.flexDirection = FlexDirection.Row;
-        levelIconContainer.style.justifyContent = Justify.SpaceAround;
+        levelIconContainer.style
+            .justifyContent = Justify.SpaceAround;
+
+        SwitchLevelBadgeDisplayMode();
 
         int completeCount   = 0;
         int secretCount     = 0;
@@ -99,7 +107,14 @@ public class LevelSelectPage : Page
 
             completeCounter.text        = completeCount.ToString() + " / " + levels.Count.ToString();
             secretCounter.text          = secretCount.ToString() + " / " + levels.Count.ToString();
+
+            badges.Add(controller);
         }
+
+        QuickButton gridControl = new QuickButton(gridButton, Color.black);
+        QuickButton listControl = new QuickButton(listButton, Color.black);
+        gridButton.AddManipulator(gridControl);
+        listButton.AddManipulator(listControl);
     }
 
     private void RegisterCallbacksAndEvents()
@@ -109,6 +124,9 @@ public class LevelSelectPage : Page
 
         backButton.RegisterButtonStateVisualChanges(backButton, Color.black, false, Color.white);
         hideCompletedButton.RegisterButtonStateVisualChanges(hideCompletedButton, Color.black, false, Color.white);
+
+        gridButton.RegisterCallback<ClickEvent>(_ => SwitchLevelBadgeDisplayMode());
+        listButton.RegisterCallback<ClickEvent>(_ => SwitchLevelBadgeDisplayMode());
     }
 
     private void UnregisterCallbacksAndEvents()
@@ -157,6 +175,29 @@ public class LevelSelectPage : Page
         }
 
         hideCompletedButton.text = showCompleted ? "Hide Completed" : "Show Completed";
+    }
+
+    private void SwitchLevelBadgeDisplayMode()
+    {
+        listButton.Show(!listButton.IsShowing());
+        gridButton.Show(!listButton.IsShowing());
+
+        if (listButton.IsShowing())
+        {
+            levelIconContainer.style.flexDirection  = FlexDirection.Column;
+            levelIconContainer.style.flexWrap       = Wrap.NoWrap;
+        }
+        else
+        {
+            levelIconContainer.style.flexWrap       = Wrap.Wrap;
+            levelIconContainer.style.flexDirection  = FlexDirection.Row;
+            //levelIconContainer.style.justifyContent = Justify.SpaceAround;
+        }
+
+        foreach (LevelBadge badge in badges)
+        {
+            badge.SwapDisplayMode(listButton.IsShowing());
+        }
     }
 
     #endregion

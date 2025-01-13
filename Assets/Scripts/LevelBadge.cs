@@ -38,6 +38,7 @@ public class LevelBadge
             miniBadge.Show(!fullBadge);
         }
     }
+
     #endregion
 
     #region Constructor
@@ -168,6 +169,11 @@ public class LevelBadge
     #endregion
 
     #region Public Functions
+
+    public void SwapDisplayMode(bool showFullBadge)
+    {
+        FullBadge = showFullBadge;
+    }
 
     public void RegisterOnClick(System.Action onClick)
     {
