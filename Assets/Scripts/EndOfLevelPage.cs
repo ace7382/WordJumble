@@ -41,6 +41,11 @@ public class EndOfLevelPage : Page
     private VisualElement   categoryDetails;
     private VisualElement   buttonContainer;
 
+    VisualElement           mainMenu;
+    VisualElement           nextLevel;
+    VisualElement           findSecret;
+    VisualElement           levelSelect;
+
     #endregion
 
     #region Inherited Functions
@@ -188,10 +193,11 @@ public class EndOfLevelPage : Page
         categoryDetails             = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.END_OF_LEVEL_PAGE__CATEGORY_DETAILS_NAME);
         buttonContainer             = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.END_OF_LEVEL_PAGE__BUTTON_CONTAINER_NAME);
 
-        VisualElement mainMenu      = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.END_OF_LEVEL_PAGE__MAIN_MENU_BUTTON_NAME);
-        VisualElement nextLevel     = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.END_OF_LEVEL_PAGE__NEXT_BUTTON_NAME);
-        VisualElement findSecret    = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.END_OF_LEVEL_PAGE__SECRET_FIND_BUTTON_NAME);
-        VisualElement levelSelect   = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.END_OF_LEVEL_PAGE__LEVEL_SELECT_BUTTON_NAME);
+        mainMenu                    = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.END_OF_LEVEL_PAGE__MAIN_MENU_BUTTON_NAME);
+        nextLevel                   = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.END_OF_LEVEL_PAGE__NEXT_BUTTON_NAME);
+        findSecret                  = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.END_OF_LEVEL_PAGE__SECRET_FIND_BUTTON_NAME);
+        levelSelect                 = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.END_OF_LEVEL_PAGE__LEVEL_SELECT_BUTTON_NAME);
+
         VisualElement headerBG      = header.parent;
 
         headerBG.SetColor(UIManager.instance.GetColor(level.Words.Count - 1));
@@ -244,19 +250,79 @@ public class EndOfLevelPage : Page
             secretCounter.parent.Hide();
 
             categoryTitle.text      = "00:00";
+
+            nextLevel.Hide();
+            findSecret.Hide();
+            levelSelect.Hide();
         }
         else
         {
             categoryTitle.text      = level.Category.Name();
             completeCounter.text    = GameManager.instance.SaveData.LevelCompleteCount(level.Category) + " / " + LevelDefinitions.LevelCount(level.Category);
             secretCounter.text      = GameManager.instance.SaveData.SecretFoundCount(level.Category) + " / " + LevelDefinitions.SecretCount(level.Category);
+
+            if (GameManager.instance.GetNextLevel(level) == null)
+                nextLevel.Hide();
+
+            if (!level.HasSecretWord || GameManager.instance.SaveData.IsSecretWordFound(level))
+                findSecret.Hide();
         }
+
+        QuickButton mainMenuButton      = new QuickButton(mainMenu, Color.black);
+        QuickButton levelSelectButton   = new QuickButton(levelSelect, Color.black);
+        QuickButton findSecretButton    = new QuickButton(findSecret, Color.black);
+        QuickButton nextLevelButton     = new QuickButton(nextLevel, Color.black);
+
+        mainMenu.AddManipulator(mainMenuButton);
+        levelSelect.AddManipulator(levelSelectButton);
+        findSecret.AddManipulator(findSecretButton);
+        nextLevel.AddManipulator(nextLevelButton);
+
+        mainMenu.RegisterCallback<ClickEvent>((_) => ReturnToMainMenu());
+        levelSelect.RegisterCallback<ClickEvent>((_) => ReturnToLevelSelect());
+        findSecret.RegisterCallback<ClickEvent>((_) => ReturnToLevelToFindSecretWord());
+        nextLevel.RegisterCallback<ClickEvent>((_) => GoToNextLevel());
     }
 
     private void ReturnToMainMenu()
     {
-        if (canClick)
+        if (!canClick)
             return;
+
+        PageManager.instance.StartCoroutine(PageManager.instance.OpenPageOnAnEmptyStack<MainMenuPage>());
+    }
+
+    private void ReturnToLevelSelect()
+    {
+        if (!canClick)
+            return;
+
+        object[] args   = new object[1];
+        args[0]         = level.Category;
+
+        PageManager.instance.StartCoroutine(PageManager.instance.OpenPageOnAnEmptyStack<LevelSelectPage>(args));
+    }
+
+    private void ReturnToLevelToFindSecretWord()
+    {
+        if (!canClick)
+            return;
+
+        PageManager.instance.StartCoroutine(PageManager.instance.CloseTopPage());
+    }
+
+    private void GoToNextLevel()
+    {
+        if (!canClick)
+            return;
+
+        NewLevel nextLevel  = GameManager.instance.GetNextLevel(level);
+
+        object[] args       = new object[2];
+        args[0]             = typeof(GamePage);
+        args[1]             = new object[2] { false, nextLevel };
+
+        PageManager.instance.StartCoroutine(PageManager.instance.AddPageToStack<PageLoadAnimationPage>(args));
     }
 
     #endregion
