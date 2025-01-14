@@ -132,10 +132,13 @@ public class LevelBadge
             bool isLevelComplete        = GameManager.instance.SaveData.IsLevelComplete(level);
             miniComplete.SetVisibility(isLevelComplete);
 
-            if (GameManager.instance.SaveData.IsLevelComplete(level))
+            if (GameManager.instance.SaveData.IsLevelFullyComplete(level))
             {
                 miniBadge.SetBorderColor(Color.black);
                 miniBadge.SetBorderWidth(8f);
+
+                root.ElementAt(0).SetBorderColor(Color.black);
+                root.ElementAt(0).SetBorderWidth(8f);
             }
         }
 

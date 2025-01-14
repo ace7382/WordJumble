@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,8 +21,10 @@ public class NewLevel
     public int              LevelNumber;
     public List<string>     Words;
     public string           SecretWord;
+    public DateTime         Date;
 
     public bool             IsNull          { get { return Category == LevelCategory.NULL; } }
+    public bool             HasSecretWord   { get { return !string.IsNullOrEmpty(SecretWord); } }
 
     public NewLevel()
     {
@@ -30,15 +33,28 @@ public class NewLevel
         LevelNumber         = -1;
         Words               = new List<string>();
         SecretWord          = string.Empty;
+        Date                = new DateTime(1900, 1, 1);
     }
 
     public NewLevel(LevelCategory category, string theme, int levelNumber, List<string> words, string secretWord)
+    {
+        Category = category;
+        Theme = theme;
+        LevelNumber = levelNumber;
+        Words = words;
+        SecretWord = secretWord;
+    }
+
+    public NewLevel(LevelCategory category, string theme, int levelNumber, List<string> words, string secretWord, DateTime date)
     {
         Category            = category;
         Theme               = theme;
         LevelNumber         = levelNumber;
         Words               = words;
         SecretWord          = secretWord;
+
+        if (Category == LevelCategory.DAILY)
+            Date = date;
     }
 }
 
@@ -102,4 +118,14 @@ public static class LevelDefinitions
 
         new NewLevel(LevelCategory.ADVANCED, "Cars", 97, new List<string>() { "Car", "Auto", "Truck", "Driver", "Minivan", "Combustion", "Convertible" }, "Vroom"),
     };
+
+    public static int LevelCount(LevelCategory category)
+    {
+        return ALL_LEVELS.FindAll(x => x.Category == category).Count;
+    }
+
+    public static int SecretCount(LevelCategory category)
+    {
+        return ALL_LEVELS.FindAll(x => x.Category == category && x.HasSecretWord).Count;
+    }
 }

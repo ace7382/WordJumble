@@ -68,6 +68,25 @@ public class UIManager : MonoBehaviour
     public const string GAME_OVERLAY_PAGE__BUTTON_3_NAME            = "Button3";
     public const string GAME_OVERLAY_PAGE__BUTTON_4_NAME            = "Button4";
 
+    public const string END_OF_LEVEL_PAGE__HEADER_NAME              = "LevelComplete";
+    public const string END_OF_LEVEL_PAGE__HEADER_DOTS_NAME         = "HeaderDots";
+    public const string END_OF_LEVEL_PAGE__SECRET_FOUND_NAME        = "SecretFound";
+    public const string END_OF_LEVEL_PAGE__CENTER_PANEL_NAME        = "CenterPanel";
+    public const string END_OF_LEVEL_PAGE__GUESSES_NAME             = "GuessesNumber";
+    public const string END_OF_LEVEL_PAGE__WORDS_FOUND_NAME         = "WordsNumber";
+    public const string END_OF_LEVEL_PAGE__NEW_WORDS_NAME           = "NewWordsNumber";
+    public const string END_OF_LEVEL_PAGE__CATEGORY_NAME            = "Category";
+    public const string END_OF_LEVEL_PAGE__CATEGORY_DETAILS_NAME    = "CategoryDetails";
+    public const string END_OF_LEVEL_PAGE__COMPLETE_COUNT_NAME      = "CompleteCounter";
+    public const string END_OF_LEVEL_PAGE__SECRET_COUNT_NAME        = "SecretWordCounter";
+    public const string END_OF_LEVEL_PAGE__NEXT_BUTTON_NAME         = "NextLevel";
+    public const string END_OF_LEVEL_PAGE__MAIN_MENU_BUTTON_NAME    = "MainMenu";
+    public const string END_OF_LEVEL_PAGE__SECRET_FIND_BUTTON_NAME  = "SecretFind";
+    public const string END_OF_LEVEL_PAGE__LEVEL_SELECT_BUTTON_NAME = "LevelSelect";
+    public const string END_OF_LEVEL_PAGE__BREAK_NAME               = "Break";
+    public const string END_OF_LEVEL_PAGE__BUTTON_CONTAINER_NAME    = "ButtonContainer";
+
+
     public const string LETTER_TILE__CONTAINER_NAME                 = "Tile";
     public const string LETTER_TILE__LETTER_LABEL_NAME              = "TileLetter";
 

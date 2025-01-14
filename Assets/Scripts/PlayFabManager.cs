@@ -108,7 +108,7 @@ public class PlayFabManager : MonoBehaviour
 
         LevelData l             = JsonUtility.FromJson<LevelData>(jsonString);
 
-        dailyLevel              = new NewLevel(LevelCategory.DAILY, l.theme, -1, l.words, "");
+        dailyLevel              = new NewLevel(LevelCategory.DAILY, l.theme, -1, l.words, "", ServerDate);
 
         if (GameManager.instance.SaveData.DailyPuzzleDate.Date != ServerDate.Date)
             GameManager.instance.SaveData.NewDay_ResetTimeAndFoundList();

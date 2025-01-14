@@ -55,6 +55,11 @@ public class SaveFile
         return IsLevelComplete(lev.Category, lev.LevelNumber);
     }
 
+    public bool IsLevelComplete_Daily(NewLevel level)
+    {
+        return IsLevelComplete_Daily(level.Date);
+    }
+
     public bool IsLevelComplete_Daily(DateTime date)
     {
         string dateAsString = Utilities.GetDateAsString(date);
@@ -66,6 +71,16 @@ public class SaveFile
     public bool IsLevelComplete_Daily()
     {
         return IsLevelComplete_Daily(PlayFabManager.instance.ServerDate);
+    }
+
+    public bool IsLevelFullyComplete(NewLevel level)
+    {
+        if (level.Category == LevelCategory.DAILY)
+        {
+            return IsLevelComplete_Daily(level);
+        }
+
+        return IsLevelComplete(level) && IsSecretWordFound(level);
     }
 
     public bool IsWordFound(LevelCategory cat, int levNum, int wordIndex)
@@ -119,5 +134,33 @@ public class SaveFile
     {
         TodaysDailyProgress         = Enumerable.Repeat(false, PlayFabManager.instance.DailyLevel.Words.Count).ToList();
         DailyPuzzleTimeInSeconds    = 0f;
+    }
+
+    public int LevelCompleteCount(LevelCategory category)
+    {
+        int ret = 0;
+
+        foreach (KeyValuePair<int, List<bool>> levelProg in LevelProgress[category])
+        {
+            if (levelProg.Value.Contains(false))
+                continue;
+
+            ret++;
+        }
+
+        return ret;
+    }
+
+    public int SecretFoundCount(LevelCategory category)
+    {
+        int ret = 0;
+
+        foreach(KeyValuePair<int, bool> prog in SecretWordProgress[category])
+        {
+            if (prog.Value == true)
+                ret++;
+        }
+
+        return ret;
     }
 }

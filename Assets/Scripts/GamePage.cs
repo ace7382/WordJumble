@@ -504,39 +504,47 @@ public class GamePage : Page
 
         Pause();
 
-        object[] args       = new object[7];
-        NewLevel nextLevel  = dailyJumblie ? null : GameManager.instance.GetNextLevel(currentLevel);
+        //object[] args       = new object[7];
+        //NewLevel nextLevel  = dailyJumblie ? null : GameManager.instance.GetNextLevel(currentLevel);
 
-        args[0]             = dailyJumblie ? "Daily Jumblie Complete!\n" + timer.text
-                                        : (nextLevel == null ? "All Levels Complete!" : "Level Complete");
-        args[1]             = "Exit";
-        args[2]             = nextLevel == null ? null : "Next Level";
-        args[3]             = action_MainMenu;
+        //args[0]             = dailyJumblie ? "Daily Jumblie Complete!\n" + timer.text
+        //                                : (nextLevel == null ? "All Levels Complete!" : "Level Complete");
+        //args[1]             = "Exit";
+        //args[2]             = nextLevel == null ? null : "Next Level";
+        //args[3]             = action_MainMenu;
 
-        Action openNext     = delegate {
-                                object[] args   = new object[2];
-                                args[0]         = typeof(GamePage);
-                                args[1]         = new object[2] { false, nextLevel };
+        //Action openNext     = delegate {
+        //                        object[] args   = new object[2];
+        //                        args[0]         = typeof(GamePage);
+        //                        args[1]         = new object[2] { false, nextLevel };
 
-                                PageManager.instance.StartCoroutine(PageManager.instance.AddPageToStack<PageLoadAnimationPage>(args));
-                            };
+        //                        PageManager.instance.StartCoroutine(PageManager.instance.AddPageToStack<PageLoadAnimationPage>(args));
+        //                    };
 
-        args[4]             = openNext;
+        //args[4]             = openNext;
 
-        if (!dailyJumblie && !GameManager.instance.SaveData.IsSecretWordFound(currentLevel))
-        {
-            returningForSecret = true;
+        //if (!dailyJumblie && !GameManager.instance.SaveData.IsSecretWordFound(currentLevel))
+        //{
+        //    returningForSecret = true;
 
-            args[5]         = "Find Secret";
-            args[6]         = action_CloseOverlay;
-        }
-        else
-        {
-            args[5]         = null;
-            args[6]         = null;
-        }
+        //    args[5]         = "Find Secret";
+        //    args[6]         = action_CloseOverlay;
+        //}
+        //else
+        //{
+        //    args[5]         = null;
+        //    args[6]         = null;
+        //}
 
-        PageManager.instance.StartCoroutine(PageManager.instance.AddPageToStack<GameOverlayPage>(args));
+        //PageManager.instance.StartCoroutine(PageManager.instance.AddPageToStack<GameOverlayPage>(args));
+
+        object[] args           = new object[4];
+        args[0]                 = currentLevel;
+        args[1]                 = 10;
+        args[2]                 = 15;
+        args[3]                 = 999;
+
+        PageManager.instance.StartCoroutine(PageManager.instance.AddPageToStack<EndOfLevelPage>(args));
     }
 
     private Tween PulseFoundWordBadge(VisualElement badge)
