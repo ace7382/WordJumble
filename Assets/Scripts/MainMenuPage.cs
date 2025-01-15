@@ -295,7 +295,8 @@ public class MainMenuPage : Page
             , animInTime
         ).Play()
         .OnComplete(() => {
-            if (!GameManager.instance.SaveData.IsLevelComplete_Daily())
+            //if (!GameManager.instance.SaveData.IsLevelComplete_Daily(PlayFabManager.instance.DailyLevel))
+            if (!GameManager.instance.SaveData.IsLevelComplete(PlayFabManager.instance.DailyLevel))
                 controller.RegisterOnClick(onClick);
         });
     }

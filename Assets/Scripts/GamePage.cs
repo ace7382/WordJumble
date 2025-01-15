@@ -45,6 +45,9 @@ public class GamePage : Page
     private Action                  action_MainMenu     = delegate { PageManager.instance.StartCoroutine(PageManager.instance.OpenPageOnAnEmptyStack<MainMenuPage>()); };
     private Action                  action_CloseOverlay = delegate { PageManager.instance.StartCoroutine(PageManager.instance.CloseTopPage()); };
 
+    private List<string>            wordsFound          = new List<string>();
+    private int                     guessesMade         = 0;
+
     #endregion
 
     #region Public Properties
@@ -75,9 +78,7 @@ public class GamePage : Page
         GameManager.instance.StopTimer();
 
         RemoveListeners();
-
-        if (currentLevel.Category == LevelCategory.DAILY)
-            GameManager.instance.SaveData.DailyPuzzleDate = PlayFabManager.instance.ServerDate;
+        SaveFoundWords();
 
         GameManager.instance.SaveGame();
     }
@@ -92,6 +93,9 @@ public class GamePage : Page
 
         SetupUI();
         AddListeners();
+
+        if (currentLevel.Category == LevelCategory.DAILY)
+            GameManager.instance.SaveData.DailyPuzzleDate = PlayFabManager.instance.ServerDate;
     }
 
     public override void OnFocusReturnedToPage()
@@ -137,9 +141,11 @@ public class GamePage : Page
 
         for (int i = 0; i < currentLevel.Words.Count; i++)
         {
-            bool found = dailyJumblie ?
-                GameManager.instance.SaveData.IsWordFound_Daily(i)
-                : GameManager.instance.SaveData.IsWordFound(currentLevel.Category, currentLevel.LevelNumber, i);
+            //bool found = dailyJumblie ?
+            //    GameManager.instance.SaveData.IsWordFound_Daily(i)
+            //    : GameManager.instance.SaveData.IsWordFound(currentLevel.Category, currentLevel.LevelNumber, i);
+
+            bool found = GameManager.instance.SaveData.IsWordFound(currentLevel, i);
 
             foreach (char letter in currentLevel.Words[i])
             {
@@ -197,7 +203,8 @@ public class GamePage : Page
             secretWordBadge
                 .transform.scale    = Vector3.zero;
             
-            secretWordBadge.Show(GameManager.instance.SaveData.IsSecretWordFound(currentLevel.Category, currentLevel.LevelNumber));
+            //secretWordBadge.Show(GameManager.instance.SaveData.IsSecretWordFound(currentLevel.Category, currentLevel.LevelNumber));
+            secretWordBadge.Show(GameManager.instance.SaveData.IsSecretWordFound(currentLevel));
 
             foundWordContainer.Add(secretWordBadge);
             ////////
@@ -333,6 +340,9 @@ public class GamePage : Page
 
         int index = -1;
 
+        guessesMade++;
+        AddWordToFoundList(CurrentWord);
+
         for (int i = 0; i < currentLevel.Words.Count; i++)
         {
             if (currentLevel.Words[i].Equals(CurrentWord, StringComparison.OrdinalIgnoreCase))
@@ -342,7 +352,7 @@ public class GamePage : Page
             }    
         }
 
-        if (index > -1 && !GameManager.instance.SaveData.IsWordFound(currentLevel.Category, currentLevel.LevelNumber, index))
+        if (index > -1 && !GameManager.instance.SaveData.IsWordFound(currentLevel, index))
         {
             foreach (Tile t in selectedTiles)
             {
@@ -406,6 +416,25 @@ public class GamePage : Page
             .OnComplete(() => { canClick = true; ClearAll(); });
     }
 
+    private void AddWordToFoundList(string word)
+    {
+        word = word.ToUpper();
+
+        if (wordsFound.Contains(word))
+            return;
+
+        //If Secret Word, in level's word list
+        //or a word from the list of all words,
+        //save reference to it
+
+        if (string.Equals(word, currentLevel.SecretWord, StringComparison.OrdinalIgnoreCase)
+            || currentLevel.Words.Contains(word, StringComparer.OrdinalIgnoreCase)
+            || GameManager.instance.IsWordInList(word))
+        {
+            wordsFound.Add(word);
+        }
+    }
+
     private void ClearAll()
     {
         foreach (Tile t in selectedTiles)
@@ -431,7 +460,7 @@ public class GamePage : Page
 
     private void SecretWordFound()
     {
-        if (GameManager.instance.SaveData.IsSecretWordFound(currentLevel.Category, currentLevel.LevelNumber))
+        if (GameManager.instance.SaveData.IsSecretWordFound(currentLevel))
             return;
 
         GameManager.instance.SaveData.MarkSecretWordFound(currentLevel);
@@ -492,12 +521,33 @@ public class GamePage : Page
                 t.Show(showFoundTiles);
     }
 
+    private int GetNewWordCount()
+    {
+        int newWords = 0;
+
+        for (int i = 0; i < wordsFound.Count; i++)
+        {
+            if (GameManager.instance.SaveData.FoundWords.ContainsKeyIgnoreCase(wordsFound[i]))
+                continue;
+
+            newWords++;
+        }
+
+        return newWords;
+    }
+
+    private void SaveFoundWords()
+    {
+        for (int i = 0; i < wordsFound.Count; i++)
+            GameManager.instance.SaveData.AddFoundWord(wordsFound[i]);
+    }
+
     private void FinishLevel()
     {
         if (!dailyJumblie && !GameManager.instance.SaveData.IsLevelComplete(currentLevel))
             return;
 
-        if (dailyJumblie && !GameManager.instance.SaveData.IsLevelComplete_Daily(PlayFabManager.instance.ServerDate))
+        if (dailyJumblie && !GameManager.instance.SaveData.IsLevelComplete(currentLevel))
             return;
 
         canClick            = false;
@@ -540,9 +590,9 @@ public class GamePage : Page
 
         object[] args           = new object[4];
         args[0]                 = currentLevel;
-        args[1]                 = 10;
-        args[2]                 = 15;
-        args[3]                 = 999;
+        args[1]                 = guessesMade;
+        args[2]                 = wordsFound.Count;
+        args[3]                 = GetNewWordCount();
 
         PageManager.instance.StartCoroutine(PageManager.instance.AddPageToStack<EndOfLevelPage>(args));
     }

@@ -14,6 +14,8 @@ public class SaveFile
     public float                                                    DailyPuzzleTimeInSeconds    = 0f;
     public DateTime                                                 DailyPuzzleDate;
 
+    public Dictionary<string, int>                                  FoundWords;
+
     public SaveFile()
     {
         LevelProgress           = new Dictionary<LevelCategory, Dictionary<int, List<bool>>>();
@@ -21,6 +23,7 @@ public class SaveFile
         TodaysDailyProgress     = Enumerable.Repeat(false, 10).ToList();
         CompletedDailyPuzzles   = new List<string>();
         DailyPuzzleDate         = new DateTime(1900, 01, 01);
+        FoundWords              = new Dictionary<string, int>();
 
         Dictionary<int, List<bool>> final = new Dictionary<int, List<bool>>();
         Dictionary<int, bool> secretFinal = new Dictionary<int, bool>();
@@ -43,91 +46,62 @@ public class SaveFile
         }
     }
 
-    public bool IsLevelComplete(LevelCategory cat, int levNum)
+    public bool IsLevelComplete(NewLevel level)
     {
-        NewLevel def = LevelDefinitions.ALL_LEVELS.Find(x => x.Category == cat && x.LevelNumber == levNum);
+        if (level.Category == LevelCategory.DAILY)
+        {
+            string dateAsString = Utilities.GetDateAsString(level.Date);
 
-        return def.Words.Count == LevelProgress[cat][levNum].FindAll(x => x == true).Count();
-    }
-
-    public bool IsLevelComplete(NewLevel lev)
-    {
-        return IsLevelComplete(lev.Category, lev.LevelNumber);
-    }
-
-    public bool IsLevelComplete_Daily(NewLevel level)
-    {
-        return IsLevelComplete_Daily(level.Date);
-    }
-
-    public bool IsLevelComplete_Daily(DateTime date)
-    {
-        string dateAsString = Utilities.GetDateAsString(date);
-
-        return CompletedDailyPuzzles.FindIndex(x => string.Equals(x, dateAsString)) > -1;
-        //return CompletedDailyPuzzles.FindIndex(x => x.Date == date.Date) > -1;
-    }
-
-    public bool IsLevelComplete_Daily()
-    {
-        return IsLevelComplete_Daily(PlayFabManager.instance.ServerDate);
+            return CompletedDailyPuzzles.FindIndex(x => string.Equals(x, dateAsString)) > -1;
+        }
+        
+        return LevelProgress[level.Category][level.LevelNumber].FindIndex(x => x == false) == -1;
     }
 
     public bool IsLevelFullyComplete(NewLevel level)
     {
-        if (level.Category == LevelCategory.DAILY)
-        {
-            return IsLevelComplete_Daily(level);
-        }
-
         return IsLevelComplete(level) && IsSecretWordFound(level);
     }
 
-    public bool IsWordFound(LevelCategory cat, int levNum, int wordIndex)
+    public bool IsWordFound(NewLevel level, int wordIndex)
     {
-        if (cat == LevelCategory.DAILY)
-            return IsWordFound_Daily(wordIndex);
+        if (level.Category == LevelCategory.DAILY)
+            return TodaysDailyProgress[wordIndex];
 
-        return LevelProgress[cat][levNum][wordIndex];
+        return LevelProgress[level.Category][level.LevelNumber][wordIndex];
     }
 
-    public bool IsWordFound_Daily(int index)
+    public bool IsSecretWordFound(NewLevel level)
     {
-        return TodaysDailyProgress[index];
+        return SecretWordProgress[level.Category][level.LevelNumber];
     }
 
-    public bool IsSecretWordFound(LevelCategory cat, int levNum)
+    public void MarkWordFound(NewLevel level, int wordIndex)
     {
-        return SecretWordProgress[cat][levNum];
-    }
+        if (level.Category == LevelCategory.DAILY)
+        {
+            TodaysDailyProgress[wordIndex] = true;
 
-    public bool IsSecretWordFound(NewLevel lev)
-    {
-        return IsSecretWordFound(lev.Category, lev.LevelNumber);
-    }
-
-    public void MarkWordFound(NewLevel lev, int index)
-    {
-        if (lev.Category == LevelCategory.DAILY)
-            MarkWordFound_Daily(index);
+            if (!TodaysDailyProgress.Contains(false))
+                CompletedDailyPuzzles.Add(Utilities.GetDateAsString(level.Date));
+        }
         else
-            LevelProgress[lev.Category][lev.LevelNumber][index] = true;
+            LevelProgress[level.Category][level.LevelNumber][wordIndex] = true;
     }
 
-    public void MarkWordFound_Daily(int index)
+    public void MarkSecretWordFound(NewLevel level)
     {
-        TodaysDailyProgress[index] = true;
-
-        if (TodaysDailyProgress.Contains(false))
-            return;
-
-        CompletedDailyPuzzles.Add(Utilities.GetDateAsString(PlayFabManager.instance.ServerDate));
-        //CompletedDailyPuzzles.Add(PlayFabManager.instance.ServerDate);
+        SecretWordProgress[level.Category][level.LevelNumber] = true;
     }
 
-    public void MarkSecretWordFound(NewLevel lev)
+    public void AddFoundWord(string word)
     {
-        SecretWordProgress[lev.Category][lev.LevelNumber] = true;
+        word = word.ToUpper();
+
+        if (FoundWords.ContainsKey(word))
+            FoundWords[word]++;
+        else
+            FoundWords.Add(word, 1);
     }
 
     public void NewDay_ResetTimeAndFoundList()

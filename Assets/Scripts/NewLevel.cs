@@ -38,11 +38,11 @@ public class NewLevel
 
     public NewLevel(LevelCategory category, string theme, int levelNumber, List<string> words, string secretWord)
     {
-        Category = category;
-        Theme = theme;
-        LevelNumber = levelNumber;
-        Words = words;
-        SecretWord = secretWord;
+        Category            = category;
+        Theme               = theme;
+        LevelNumber         = levelNumber;
+        Words               = words;
+        SecretWord          = secretWord;
     }
 
     public NewLevel(LevelCategory category, string theme, int levelNumber, List<string> words, string secretWord, DateTime date)

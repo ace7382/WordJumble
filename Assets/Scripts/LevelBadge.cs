@@ -79,7 +79,8 @@ public class LevelBadge
                 continue;
             }
 
-            bool isWordFound            = GameManager.instance.SaveData.IsWordFound(level.Category, level.LevelNumber, i - 1);
+            //bool isWordFound            = GameManager.instance.SaveData.IsWordFound(level.Category, level.LevelNumber, i - 1);
+            bool isWordFound            = GameManager.instance.SaveData.IsWordFound(level, i - 1);
             currentBadge.style
                 .backgroundColor        =  isWordFound ?
                                             UIManager.instance.GetColor(i - 1) :
@@ -154,7 +155,9 @@ public class LevelBadge
             Label dailyStatusLabel      = root.Q<Label>(UIManager.LEVEL_SELECT_BADGE__DAILY_STATUS_LABEL_NAME);
             string timeString           = Utilities.GetTimerStringFromFloat(GameManager.instance.SaveData.DailyPuzzleTimeInSeconds);
 
-            if (GameManager.instance.SaveData.IsLevelComplete_Daily(PlayFabManager.instance.ServerDate))
+            //if (GameManager.instance.SaveData.IsLevelComplete_Daily(PlayFabManager.instance.ServerDate))
+            //if (GameManager.instance.SaveData.IsLevelComplete_Daily(level))
+            if (GameManager.instance.SaveData.IsLevelComplete(level))
             {
                 dailyStatusLabel.text   = "Complete! - " + timeString;
             }

@@ -96,14 +96,14 @@ public class GameOverlayPage : Page
         messageLabel.text   = message;
         button1.text        = button1Label;
 
-        button1.clicked     += () => button1Action.Invoke();
+        button1.clicked     += () => { if (!canClick) return; button1Action.Invoke(); };
 
         if (string.IsNullOrEmpty(button2Label))
             button2.Hide();
         else
         {
             button2.text    = button2Label;
-            button2.clicked += () => button2Action.Invoke();
+            button2.clicked += () => { if (!canClick) return; button2Action.Invoke(); };
         }
 
         if (string.IsNullOrEmpty(button3Label))
@@ -111,7 +111,7 @@ public class GameOverlayPage : Page
         else
         {
             button3.text = button3Label;
-            button3.clicked += () => button3Action.Invoke();
+            button3.clicked += () => { if (!canClick) return; button3Action.Invoke(); };
         }
 
         if (string.IsNullOrEmpty(button4Label))
@@ -119,7 +119,7 @@ public class GameOverlayPage : Page
         else
         {
             button4.text = button4Label;
-            button4.clicked += () => button4Action.Invoke();
+            button4.clicked += () => { if (!canClick) return; button4Action.Invoke(); };
         }        
     }
 

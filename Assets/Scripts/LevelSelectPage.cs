@@ -169,7 +169,7 @@ public class LevelSelectPage : Page
         foreach (VisualElement child in levelIconContainer.Children())
         {
             NewLevel lev        = (NewLevel)child.userData;
-            bool completed      = GameManager.instance.SaveData.IsLevelComplete(lev.Category, lev.LevelNumber);
+            bool completed      = GameManager.instance.SaveData.IsLevelComplete(lev);
 
             child.Show(showCompleted || completed == showCompleted);
         }

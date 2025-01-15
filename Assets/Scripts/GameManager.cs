@@ -165,7 +165,7 @@ public class GameManager : MonoBehaviour
             levelProgress.Add(catData);
         }
 
-        foreach(KeyValuePair<LevelCategory, Dictionary<int, bool>> pair in SaveData.SecretWordProgress)
+        foreach (KeyValuePair<LevelCategory, Dictionary<int, bool>> pair in SaveData.SecretWordProgress)
         {
             Dictionary<string, object> catData  = new Dictionary<string, object>();
 
@@ -187,6 +187,20 @@ public class GameManager : MonoBehaviour
 
             secretProgress.Add(catData);
         }
+
+        List<object> foundWordsData = new List<object>();
+
+        foreach (KeyValuePair<string, int> pair in SaveData.FoundWords)
+        {
+            Dictionary<string, object> wordData = new Dictionary<string, object>();
+
+            wordData["Word"]                    = pair.Key;
+            wordData["Num"]                     = pair.Value;
+
+            foundWordsData.Add(wordData);
+        }
+
+        finalData["FoundWords"]                 = foundWordsData;
 
         finalData["CompletedDailyPuzzles"]      = SaveData.CompletedDailyPuzzles;
         finalData["TodaysDailyProgress"]        = SaveData.TodaysDailyProgress;
@@ -213,8 +227,11 @@ public class GameManager : MonoBehaviour
         PreloadRandomWords(50);
 
         return preRandWords.Pop();
+    }
 
-        //return wordList.ElementAt(rand.Next(0, wordList.Count)).Key;
+    public bool IsWordInList(string word)
+    {
+        return wordList.ContainsKeyIgnoreCase(word);
     }
 
     #endregion
@@ -288,6 +305,18 @@ public class GameManager : MonoBehaviour
 
             SaveData.DailyPuzzleDate            = DateTime.Parse(json["DailyPuzzleDate"].Value);
             SaveData.DailyPuzzleTimeInSeconds   = json["DailyPuzzleTimeInSeconds"].AsFloat;
+
+            JSONArray foundWords                = json["FoundWords"].AsArray;
+            SaveData.FoundWords                 = new Dictionary<string, int>();
+
+            for (int i = 0; i < foundWords.Count; i++)
+            {
+                string word         = foundWords[i]["Word"].Value;
+                int num             = foundWords[i]["Num"].AsInt;
+
+                SaveData.FoundWords
+                    [word]          = num;
+            }
         }
     }
 
