@@ -24,16 +24,19 @@ public class MainMenuPage : Page
     private Label           loadingLabel;
     private Label           dailyJumblieLabel;
 
-    private VisualElement   menuContainer;
     private VisualElement   redButton;
     private VisualElement   yellowButton;
     private VisualElement   blueButton;
     private VisualElement   greenButton;
+    private VisualElement   achievementButton;
+    private VisualElement   settingsButton;
 
     private QuickButton     redQB;
     private QuickButton     yellowQB;
     private QuickButton     blueQB;
     private QuickButton     greenQB;
+    private QuickButton     achieveQB;
+    private QuickButton     settingsQB;
 
     private VisualElement   titleContainer;
     private Label           title;
@@ -149,6 +152,12 @@ public class MainMenuPage : Page
 
         yellowQB = new QuickButton(yellowButton, UIManager.instance.GetColor(1));
         yellowButton.AddManipulator(yellowQB);
+
+        achieveQB = new QuickButton(achievementButton, Color.black);
+        achievementButton.AddManipulator(achieveQB);
+
+        settingsQB = new QuickButton(settingsButton, Color.black);
+        settingsButton.AddManipulator(settingsQB);
     }
 
     public override IEnumerator AnimateOut()
@@ -159,6 +168,8 @@ public class MainMenuPage : Page
         blueButton.RemoveManipulator(blueQB);
         greenButton.RemoveManipulator(greenQB);
         yellowButton.RemoveManipulator(yellowQB);
+        achievementButton.RemoveManipulator(achieveQB);
+        settingsButton.RemoveManipulator(settingsQB);
 
         Sequence s = DOTween.Sequence();
 
@@ -232,11 +243,13 @@ public class MainMenuPage : Page
         title                       = uiDoc.rootVisualElement.Q<Label>(UIManager.MAIN_MENU_PAGE__TITLE_NAME);
         subtitle                    = uiDoc.rootVisualElement.Q<Label>(UIManager.MAIN_MENU_PAGE__SUBTITLE_NAME);
 
-        menuContainer               = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.MAIN_MENU_PAGE__MENU_CONTAINER_NAME);
         redButton                   = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.MAIN_MENU_PAGE__RED_BUTTON_NAME);
         yellowButton                = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.MAIN_MENU_PAGE__YELLOW_BUTTON_NAME);
         blueButton                  = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.MAIN_MENU_PAGE__BLUE_BUTTON_NAME);
         greenButton                 = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.MAIN_MENU_PAGE__GREEN_BUTTON_NAME);
+
+        achievementButton           = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.MAIN_MENU_PAGE__ACHIEVEMENT_BUTTON_NAME);
+        settingsButton              = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.MAIN_MENU_PAGE__SETTINGS_BUTTON_NAME);
 
         dailyLevelButtonContainer   = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.MAIN_MENU_PAGE__DAILY_CONTAINER_NAME);
         dailyJumblieLabel           = uiDoc.rootVisualElement.Q<Label>(UIManager.MAIN_MENU_PAGE__DAILY_LABEL_NAME);
@@ -307,11 +320,28 @@ public class MainMenuPage : Page
         greenButton.RegisterCallback<ClickEvent>(_ => GoToLevelSelect(LevelCategory.ORIGINAL));
         blueButton.RegisterCallback<ClickEvent>(_ => GoToLevelSelect(LevelCategory.ADVANCED));
         yellowButton.RegisterCallback<ClickEvent>(_ => { });
+
+        achievementButton.RegisterCallback<ClickEvent>(_ => GoToAchievementPage());
+        settingsButton.RegisterCallback<ClickEvent>(_ => GoToSettingsPage());
     }
 
     private void UnregisterCallbacksAndEvents()
     {
 
+    }
+
+    private void GoToAchievementPage()
+    {
+        if (!canClick)
+            return;
+
+        PageManager.instance.StartCoroutine(PageManager.instance.OpenPageOnAnEmptyStack<AchievementsPage>());
+    }
+
+    private void GoToSettingsPage()
+    {
+        if (!canClick)
+            return;
     }
 
     private void GoToLevelSelect(LevelCategory category)

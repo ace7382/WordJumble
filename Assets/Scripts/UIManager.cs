@@ -25,6 +25,8 @@ public class UIManager : MonoBehaviour
     public const string MAIN_MENU_PAGE__YELLOW_BUTTON_NAME          = "YellowButton";
     public const string MAIN_MENU_PAGE__DAILY_LABEL_NAME            = "DailyLabel";
     public const string MAIN_MENU_PAGE__LOADING_LABEL_NAME          = "LoadingLabel";
+    public const string MAIN_MENU_PAGE__ACHIEVEMENT_BUTTON_NAME     = "AchievementsButton";
+    public const string MAIN_MENU_PAGE__SETTINGS_BUTTON_NAME        = "SettingsButton";
 
     public const string LEVEL_SELECT_PAGE__TITLE_NAME               = "Title";
     public const string LEVEL_SELECT_PAGE__ICON_CONTAINER_NAME      = "LevelIconContainer";
@@ -34,6 +36,17 @@ public class UIManager : MonoBehaviour
     public const string LEVEL_SELECT_PAGE__HIDE_COMP_BUTTON_NAME    = "HideCompletedButton";
     public const string LEVEL_SELECT_PAGE__GRID_BUTTON_NAME         = "GridButton";
     public const string LEVEL_SELECT_PAGE__LIST_BUTTON_NAME         = "ListButton";
+
+    public const string ACHIEVE_PAGE__CARD_CONTAINER_NAME           = "CardContainer";
+    public const string ACHIEVE_PAGE__COMPLETE_COUNTER_NAME         = "CompleteCounter";
+    public const string ACHIEVE_PAGE__BACK_BUTTON_NAME              = "BackButton";
+    public const string ACHIEVE_PAGE__HIDE_COMP_BUTTON_NAME         = "HideCompletedButton";
+
+    public const string ACHIEVEMENT_CARD__TITLE_NAME                = "Title";
+    public const string ACHIEVEMENT_CARD__DESCRIPTION_NAME          = "Description";
+    public const string ACHIEVEMENT_CARD__ICON_NAME                 = "Icon";
+    public const string ACHIEVEMENT_CARD__BAR_FILL_NAME             = "Fill";
+    public const string ACHIEVEMENT_CARD__BAR_LABEL_NAME            = "ProgressLabel";
 
     public const string LEVEL_SELECT_BADGE__THEME_NAME              = "ThemeLabel";
     public const string LEVEL_SELECT_BADGE__COMPLETE_ICON_NAME      = "CompletedIcon";
@@ -86,7 +99,6 @@ public class UIManager : MonoBehaviour
     public const string END_OF_LEVEL_PAGE__BREAK_NAME               = "Break";
     public const string END_OF_LEVEL_PAGE__BUTTON_CONTAINER_NAME    = "ButtonContainer";
 
-
     public const string LETTER_TILE__CONTAINER_NAME                 = "Tile";
     public const string LETTER_TILE__LETTER_LABEL_NAME              = "TileLetter";
 
@@ -108,6 +120,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private VisualTreeAsset    letterTile;
     [SerializeField] private VisualTreeAsset    solvedWordTile;
     [SerializeField] private VisualTreeAsset    levelBadge;
+    [SerializeField] private VisualTreeAsset    achievementCard;
 
     [SerializeField] private List<Color>        solvedWordColors;
     [SerializeField] private Color              secretWordColor;
@@ -121,6 +134,7 @@ public class UIManager : MonoBehaviour
     public VisualTreeAsset  LetterTile          { get { return letterTile; } }
     public VisualTreeAsset  SolvedWordTile      { get { return solvedWordTile; } }
     public VisualTreeAsset  LevelBadge          { get { return levelBadge; } }
+    public VisualTreeAsset  AchievementCard     { get { return achievementCard; } }
     public int              WordColorMax        { get { return solvedWordColors.Count; } }
 
     #endregion

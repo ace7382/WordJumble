@@ -167,6 +167,8 @@ public class EndOfLevelPage : Page
         wordsINT    = (int)args[2];
         newWordsINT = (int)args[3];
 
+        this.PostNotification(Notifications.LEVEL_COMPLTED, level);
+
         SetupUI();
     }
 

@@ -379,6 +379,7 @@ MonoBehaviour:
   - {fileID: 9197481963319205126, guid: f369d1d215a9a49fb9491e6170d80ddd, type: 3}
   - {fileID: 9197481963319205126, guid: e47023561571f46d88c1d9819d96189f, type: 3}
   - {fileID: 9197481963319205126, guid: b815d9339f47243f68d68bc0347727a0, type: 3}
+  - {fileID: 9197481963319205126, guid: fe1a5262af0474ea19c81bcca5690aef, type: 3}
 --- !u!4 &1053519718
 Transform:
   m_ObjectHideFlags: 0
@@ -456,6 +457,7 @@ MonoBehaviour:
   letterTile: {fileID: 9197481963319205126, guid: cf05cf2274c1f462bb679059ab6b23b9, type: 3}
   solvedWordTile: {fileID: 9197481963319205126, guid: c1202a53127e749dfa3d5fbde9ae1b32, type: 3}
   levelBadge: {fileID: 9197481963319205126, guid: 0a62f2affe548472688ce7013b3359f4, type: 3}
+  achievementCard: {fileID: 9197481963319205126, guid: 168bc219dc1ae436a9e0db32bd68b346, type: 3}
   solvedWordColors:
   - {r: 0.83921576, g: 0.15294118, b: 0.15294118, a: 1}
   - {r: 0.9686275, g: 0.49803925, b: 0, a: 1}
@@ -478,6 +480,50 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63fb629ae78d547c8b22277cb3f27171, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &2095143197
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2095143199}
+  - component: {fileID: 2095143198}
+  m_Layer: 0
+  m_Name: AchievementManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2095143198
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2095143197}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3557c15be55d54ac9991ec7250e372f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &2095143199
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2095143197}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -486,3 +532,4 @@ SceneRoots:
   - {fileID: 619394802}
   - {fileID: 1053519718}
   - {fileID: 1826350930}
+  - {fileID: 2095143199}

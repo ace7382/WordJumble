@@ -1,0 +1,21 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/GlobalStyles.uss?fileID=7433441132597879392&amp;guid=e0c3ee080cbe24d8aaf0c621ad1211c0&amp;type=3#GlobalStyles" />
+    <ui:VisualElement name="Page" style="flex-grow: 1;">
+        <ui:VisualElement name="Header" style="flex-grow: 0; flex-direction: row; justify-content: space-between; margin-top: 20px; margin-right: 20px; margin-bottom: 0; margin-left: 20px;">
+            <ui:VisualElement name="BackButton" class="MyButton" style="width: 100px; height: 100px; margin-top: 20px; margin-right: 20px; margin-bottom: 20px; margin-left: 20px; background-image: resource(&apos;Icons/exitLeft&apos;);" />
+            <ui:Label tabindex="-1" text="Achievements" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Title" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; -unity-font: url(&apos;project://database/Assets/UI/Quicksand-Bold.ttf?fileID=12800000&amp;guid=27fa21bd2f1ba4527b61daeb901e9520&amp;type=3#Quicksand-Bold&apos;); -unity-font-definition: initial; -unity-font-style: bold; font-size: 100px; -unity-text-align: upper-center; align-items: auto; flex-direction: row; flex-shrink: 1;" />
+            <ui:VisualElement name="ListButton" class="MyButton" style="width: 100px; height: 100px; margin-top: 20px; margin-right: 20px; margin-bottom: 20px; margin-left: 20px; background-image: resource(&apos;Icons/barsHorizontal&apos;); visibility: hidden;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="DividerLine" style="flex-grow: 0; flex-shrink: 0; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-bottom-width: 10px; max-width: 65%; align-self: center; min-width: 65%; width: 65%; margin-bottom: 20px;" />
+        <ui:ScrollView name="CardContainer" touch-scroll-type="Clamped" vertical-scroller-visibility="Hidden" horizontal-scroller-visibility="Hidden" style="flex-grow: 1; flex-direction: row; flex-wrap: wrap; margin-top: 20px; margin-right: 20px; margin-bottom: 20px; margin-left: 20px;" />
+        <ui:VisualElement name="Footer" style="flex-grow: 0; flex-shrink: 0; flex-direction: row; justify-content: center; margin-bottom: 20px; margin-right: 20px; margin-left: 20px;">
+            <ui:VisualElement name="CompleteCol" style="flex-grow: 0; align-items: center; flex-shrink: 0;">
+                <ui:VisualElement name="Row" style="flex-grow: 1; flex-direction: row; height: 100px; align-items: center;">
+                    <ui:VisualElement name="TrophyIcon" style="flex-grow: 0; background-image: resource(&apos;Icons/trophy&apos;); -unity-background-scale-mode: scale-to-fit; -unity-background-image-tint-color: rgb(0, 0, 0); height: 100px; width: 100px; flex-shrink: 0; margin-right: 20px;" />
+                    <ui:Label tabindex="-1" text="XX / XX" parse-escape-sequences="true" display-tooltip-when-elided="true" name="CompleteCounter" style="font-size: 60px; -unity-font-style: bold;" />
+                </ui:VisualElement>
+                <ui:Label tabindex="-1" text="Hide Completed" parse-escape-sequences="true" display-tooltip-when-elided="true" name="HideCompletedButton" class="MyButton" style="width: 500px; margin-top: 20px; margin-right: 20px; margin-bottom: 20px; margin-left: 20px; padding-top: 10px; padding-right: 12px; padding-bottom: 10px; padding-left: 12px; font-size: 50px;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

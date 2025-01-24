@@ -78,7 +78,7 @@ public class GamePage : Page
         GameManager.instance.StopTimer();
 
         RemoveListeners();
-        SaveFoundWords();
+        //SaveFoundWords();
 
         GameManager.instance.SaveGame();
     }
@@ -432,6 +432,7 @@ public class GamePage : Page
             || GameManager.instance.IsWordInList(word))
         {
             wordsFound.Add(word);
+            GameManager.instance.SaveData.AddFoundWord(word);
         }
     }
 
@@ -536,11 +537,11 @@ public class GamePage : Page
         return newWords;
     }
 
-    private void SaveFoundWords()
-    {
-        for (int i = 0; i < wordsFound.Count; i++)
-            GameManager.instance.SaveData.AddFoundWord(wordsFound[i]);
-    }
+    //private void SaveFoundWords()
+    //{
+    //    for (int i = 0; i < wordsFound.Count; i++)
+    //        GameManager.instance.SaveData.AddFoundWord(wordsFound[i]);
+    //}
 
     private void FinishLevel()
     {

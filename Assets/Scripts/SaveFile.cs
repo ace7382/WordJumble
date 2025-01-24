@@ -101,7 +101,11 @@ public class SaveFile
         if (FoundWords.ContainsKey(word))
             FoundWords[word]++;
         else
+        {
             FoundWords.Add(word, 1);
+
+            this.PostNotification(Notifications.WORD_ADDED_TO_FOUND_WORDS, word);
+        };
     }
 
     public void NewDay_ResetTimeAndFoundList()
@@ -136,5 +140,15 @@ public class SaveFile
         }
 
         return ret;
+    }
+
+    public bool IsAchievementUnlocked(Achievement achievement)
+    { 
+        return false;
+    }
+
+    public bool IsWordInFoundWordsList(string word)
+    {
+        return FoundWords.ContainsKeyIgnoreCase(word);
     }
 }
