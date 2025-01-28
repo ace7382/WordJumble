@@ -207,6 +207,75 @@ public class ACH_WordGroup : Achievement
     #endregion
 }
 
+public class ACH_CategoryComplete : Achievement
+{
+    #region Private Variables
+
+    private LevelCategory category;
+
+    #endregion
+
+    #region Private Properties
+
+    private int NumberOfLevelsInCategory
+    {
+        get
+        {
+            return LevelDefinitions.GetLevelCountByCategory(category);
+        }
+    }
+
+    private int NumberOfLevelsCompletedInCategory
+    {
+        get
+        {
+            return GameManager.instance.SaveData.GetLevelCompleteCount(category);
+        }
+    }
+
+    #endregion
+
+    #region Public Properties
+
+    public LevelCategory Category { get { return category; } }
+
+    #endregion
+
+    #region Constructor
+
+    public ACH_CategoryComplete(string name, int id, LevelCategory category) : base(name, id)
+    {
+        this.category = category;
+    }
+
+    #endregion
+
+    #region Inherited Functions
+
+    public override bool CheckUnlock()
+    {
+        return NumberOfLevelsCompletedInCategory >= NumberOfLevelsInCategory;
+    }
+
+    public override string GetDescription()
+    {
+        return $"Complete all levels in the \"{category.Name()}\" category";
+    }
+
+    public override string GetProgressString()
+    {
+        return $"{Mathf.Clamp(NumberOfLevelsCompletedInCategory, 0, NumberOfLevelsInCategory)} / {NumberOfLevelsInCategory}";
+    }
+
+    public override float GetProgressPercent()
+    {
+        return Mathf.Clamp((float)NumberOfLevelsCompletedInCategory
+                    / (float)NumberOfLevelsInCategory * 100f, 0f, 100f);
+    }
+
+    #endregion
+}
+
 public static class AchievementDefinitions
 {
     public static List<Achievement> ALL_ACHIEVEMENTS
@@ -218,6 +287,7 @@ public static class AchievementDefinitions
             ret.AddRange(DAILY_COUNT_ACHIEVEMENTS);
             ret.AddRange(SPECIFIC_WORD_ACHIEVEMENTS);
             ret.AddRange(WORD_GROUP_ACHIEVEMENTS);
+            ret.AddRange(CATEGORY_COMPLETE_ACHIEVEMENTS);
 
             return ret;
         }
@@ -250,5 +320,12 @@ public static class AchievementDefinitions
     {
         new ACH_WordGroup("Best Dogs", 200, new List<string>() {"Bucket", "Briar", "Corsair", "Anvil"}, 4),
         new ACH_WordGroup("GG", 201, new List<string>() {"Game", "Controller", "Console", "Chat", "Party", "Video"}, 3),
+    };
+
+    public static List<ACH_CategoryComplete> CATEGORY_COMPLETE_ACHIEVEMENTS = new List<ACH_CategoryComplete>()
+    {
+        new ACH_CategoryComplete("Baby Steps", 300, LevelCategory.BEGINNER),
+        new ACH_CategoryComplete("The OG", 301, LevelCategory.ORIGINAL),
+        new ACH_CategoryComplete("Jumblie Expert", 302, LevelCategory.ADVANCED)
     };
 }

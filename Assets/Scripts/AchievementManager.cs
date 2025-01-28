@@ -70,6 +70,17 @@ public class AchievementManager : MonoBehaviour
                     UnlockAchievement(ach);
             }
         }
+        else //Category level completed
+        {
+            for (int i = 0; i < AchievementDefinitions.CATEGORY_COMPLETE_ACHIEVEMENTS.Count; i++)
+            {
+                ACH_CategoryComplete ach = AchievementDefinitions.CATEGORY_COMPLETE_ACHIEVEMENTS[i];
+
+                if (levelCompleted.Category == ach.Category)
+                    if (ach.CheckUnlock())
+                        UnlockAchievement(ach);
+            }
+        }
     }
 
     private void OnWordAddedToFoundList(object sender, object info)

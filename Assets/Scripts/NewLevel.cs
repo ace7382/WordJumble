@@ -119,7 +119,7 @@ public static class LevelDefinitions
         new NewLevel(LevelCategory.ADVANCED, "Cars", 97, new List<string>() { "Car", "Auto", "Truck", "Driver", "Minivan", "Combustion", "Convertible" }, "Vroom"),
     };
 
-    public static int LevelCount(LevelCategory category)
+    public static int GetLevelCountByCategory(LevelCategory category)
     {
         return ALL_LEVELS.FindAll(x => x.Category == category).Count;
     }

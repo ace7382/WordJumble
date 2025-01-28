@@ -151,4 +151,22 @@ public class SaveFile
     {
         return FoundWords.ContainsKeyIgnoreCase(word);
     }
+
+    public int GetLevelCompleteCount(LevelCategory category)
+    {
+        if (!LevelProgress.ContainsKey(category))
+            return 0;
+
+        int ret = 0;
+
+        foreach (KeyValuePair<int, List<bool>> progress in LevelProgress[category])
+        {
+            if (progress.Value.FindIndex(x => x == false) != -1)
+                continue;
+
+            ret++;
+        }
+
+        return ret;
+    }
 }

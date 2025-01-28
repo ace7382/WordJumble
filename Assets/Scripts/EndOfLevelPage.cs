@@ -260,7 +260,7 @@ public class EndOfLevelPage : Page
         else
         {
             categoryTitle.text      = level.Category.Name();
-            completeCounter.text    = GameManager.instance.SaveData.LevelCompleteCount(level.Category) + " / " + LevelDefinitions.LevelCount(level.Category);
+            completeCounter.text    = GameManager.instance.SaveData.LevelCompleteCount(level.Category) + " / " + LevelDefinitions.GetLevelCountByCategory(level.Category);
             secretCounter.text      = GameManager.instance.SaveData.SecretFoundCount(level.Category) + " / " + LevelDefinitions.SecretCount(level.Category);
 
             if (GameManager.instance.GetNextLevel(level) == null)
