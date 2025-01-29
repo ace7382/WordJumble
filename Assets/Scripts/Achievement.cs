@@ -14,8 +14,9 @@ public abstract class Achievement
 
     #region Public Properties
 
-    public string       Name    { get { return name; } }
-    public int          ID      { get { return id; } }
+    public string       Name        { get { return name; } }
+    public int          ID          { get { return id; } }
+    public bool         IsUnlocked  { get { return GameManager.instance.SaveData.IsAchievementUnlocked(this); } }
 
     #endregion
 

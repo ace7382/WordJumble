@@ -9,10 +9,13 @@ public class AchievementsPage : Page
 
     private bool            canClick;
 
-    private VisualElement   completeCounter;
+    private Label           completeCounter;
+    private Label           hideCompletedButton;
+
     private VisualElement   backButton;
-    private VisualElement   hideCompletedButton;
     private VisualElement   cardContainer;
+
+    private bool            showCompleted           = true;
 
     #endregion
 
@@ -48,9 +51,9 @@ public class AchievementsPage : Page
 
     private void SetupUI()
     {
-        completeCounter             = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.ACHIEVE_PAGE__COMPLETE_COUNTER_NAME);
+        completeCounter             = uiDoc.rootVisualElement.Q<Label>(UIManager.ACHIEVE_PAGE__COMPLETE_COUNTER_NAME);
         backButton                  = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.ACHIEVE_PAGE__BACK_BUTTON_NAME);
-        hideCompletedButton         = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.ACHIEVE_PAGE__HIDE_COMP_BUTTON_NAME);
+        hideCompletedButton         = uiDoc.rootVisualElement.Q<Label>(UIManager.ACHIEVE_PAGE__HIDE_COMP_BUTTON_NAME);
         cardContainer               = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.ACHIEVE_PAGE__CARD_CONTAINER_NAME);
 
         List<Achievement> achs      = AchievementDefinitions.ALL_ACHIEVEMENTS;
@@ -60,8 +63,13 @@ public class AchievementsPage : Page
             VisualElement cardVE    = UIManager.instance.AchievementCard.Instantiate();
             AchievementCard control = new AchievementCard(cardVE, achs[i]);
 
-            cardContainer.Add(cardVE);
+            //cardVE.userData         = control;
+            cardVE.userData         = achs[i];
+
+            cardContainer.Add(cardVE); 
         }
+
+        completeCounter.text        = $"{AchievementManager.instance.CompletedAchievementCount} / {achs.Count}";
 
         RegisterCallbacksAndEvents();
 
@@ -74,6 +82,11 @@ public class AchievementsPage : Page
         backButton.AddManipulator(backButtonQB);
 
         backButton.RegisterCallback<ClickEvent>(_ => ReturnToMainMenu());
+
+        QuickButton hideCompletedQB = new QuickButton(hideCompletedButton, Color.black);
+        hideCompletedButton.AddManipulator(hideCompletedQB);
+
+        hideCompletedButton.RegisterCallback<ClickEvent>(_ => ShowHideCompleted());
     }
 
     private void ReturnToMainMenu()
@@ -84,6 +97,23 @@ public class AchievementsPage : Page
         canClick = false;
 
         PageManager.instance.StartCoroutine(PageManager.instance.OpenPageOnAnEmptyStack<MainMenuPage>());
+    }
+
+    private void ShowHideCompleted()
+    {
+        if (!canClick)
+            return;
+
+        showCompleted = !showCompleted;
+
+        foreach (VisualElement child in cardContainer.Children())
+        {
+            Achievement ach = (Achievement)child.userData;
+
+            child.Show(showCompleted || ach.IsUnlocked == showCompleted);
+        }
+
+        hideCompletedButton.text = showCompleted ? "Hide Completed" : "Show Completed";
     }
 
     #endregion

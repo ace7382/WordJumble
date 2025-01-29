@@ -19,6 +19,15 @@ public class AchievementManager : MonoBehaviour
 
     #endregion
 
+    #region Public Properties
+
+    public int CompletedAchievementCount
+    {
+        get { return GameManager.instance.SaveData.AchievementsUnlocked.Count; }
+    }
+
+    #endregion
+
     #region Inherited Functions
 
     public void Awake()

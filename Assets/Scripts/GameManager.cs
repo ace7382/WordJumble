@@ -41,8 +41,6 @@ public class GameManager : MonoBehaviour
     private System.Random               rand                = new System.Random();
     private Stack<string>               preRandWords        = new Stack<string>();
 
-    //private int stackCount;
-
     #endregion
 
     #region Public Properties
@@ -74,8 +72,6 @@ public class GameManager : MonoBehaviour
     {
         if (preRandWords.Count < 500)
             PreloadRandomWords(2);
-
-        //stackCount = preRandWords.Count;
 
         if (timerButton == null || paused)
             return;
@@ -319,7 +315,7 @@ public class GameManager : MonoBehaviour
                     [word]          = num;
             }
 
-            //Achievements
+            /////Achievements
             JSONArray achUnlocks                = json["ACH"].AsArray;
             SaveData.AchievementsUnlocked       = new List<int>();
 
@@ -329,7 +325,7 @@ public class GameManager : MonoBehaviour
             }
 
             //TODO: Check platform achieevements and compare/set that way too
-            //
+            ////////
         }
     }
 
