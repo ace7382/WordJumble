@@ -9,15 +9,17 @@ public class AchievementCard
 
     private Achievement     achievement;
     private VisualElement   root;
+    private bool            isToastCard;
 
     #endregion
 
     #region Constructor
 
-    public AchievementCard(VisualElement root, Achievement achievement)
+    public AchievementCard(VisualElement root, Achievement achievement, bool isToastCard = false)
     {
         this.root           = root;
         this.achievement    = achievement;
+        this.isToastCard    = isToastCard;
 
         SetupUI();
     }
@@ -36,8 +38,17 @@ public class AchievementCard
 
         title.text              = achievement.Name;
         description.text        = achievement.GetDescription();
-        barLabel.text           = achievement.GetProgressString();
-        barFill.style.width     = new StyleLength(new Length(Mathf.Clamp(achievement.GetProgressPercent(), 4f, 100f), LengthUnit.Percent));
+
+        if (GameManager.instance.SaveData.IsAchievementUnlocked(achievement) && !isToastCard)
+        {
+            barLabel.text       = "Achievement Unlocked!";
+            barFill.style.width = new StyleLength(new Length(100f, LengthUnit.Percent));
+        }
+        else
+        {
+            barLabel.text       = achievement.GetProgressString();
+            barFill.style.width = new StyleLength(new Length(Mathf.Clamp(achievement.GetProgressPercent(), 4f, 100f), LengthUnit.Percent));
+        }
     }
     
     #endregion

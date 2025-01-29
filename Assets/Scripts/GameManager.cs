@@ -208,6 +208,7 @@ public class GameManager : MonoBehaviour
         finalData["LevelProgress"]              = levelProgress;
         finalData["SecretWordProgress"]         = secretProgress;
         finalData["DailyPuzzleDate"]            = Utilities.GetDateAsString(SaveData.DailyPuzzleDate);
+        finalData["ACH"]                        = SaveData.AchievementsUnlocked;
 
         string dir = Application.persistentDataPath + SAVE_DIRECTORY;
 
@@ -317,6 +318,18 @@ public class GameManager : MonoBehaviour
                 SaveData.FoundWords
                     [word]          = num;
             }
+
+            //Achievements
+            JSONArray achUnlocks                = json["ACH"].AsArray;
+            SaveData.AchievementsUnlocked       = new List<int>();
+
+            for (int i = 0; i < achUnlocks.Count; i++)
+            {
+                SaveData.AchievementsUnlocked.Add(achUnlocks[i].AsInt);
+            }
+
+            //TODO: Check platform achieevements and compare/set that way too
+            //
         }
     }
 

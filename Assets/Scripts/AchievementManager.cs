@@ -4,9 +4,18 @@ using UnityEngine;
 
 public class AchievementManager : MonoBehaviour
 {
+    //TODO: remove
+    public bool achTest;
+
     #region Singleton
 
-    public static AchievementManager instance;
+    public static AchievementManager    instance;
+
+    #endregion
+
+    #region Private Variables
+
+    private AchievementQueue            achQueue;
 
     #endregion
 
@@ -20,11 +29,27 @@ public class AchievementManager : MonoBehaviour
             Destroy(gameObject);
 
         SetupListeners();
+
+        achQueue = gameObject.GetComponent<AchievementQueue>();
     }
 
     public void OnDestroy()
     {
         RemoveListeners();
+    }
+
+    //TODO:Remove
+    public void Update()
+    {
+        if (achTest)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                UnlockAchievement(AchievementDefinitions.ALL_ACHIEVEMENTS[i]);
+            }
+
+            achTest = false;
+        }
     }
 
     #endregion
@@ -45,6 +70,10 @@ public class AchievementManager : MonoBehaviour
     private void UnlockAchievement(Achievement ach)
     {
         Debug.Log($"Achievement {ach.ID} unlocked: {ach.Name} - {ach.GetDescription()}");
+
+        GameManager.instance.SaveData.AchievementsUnlocked.Add(ach.ID);
+        
+        achQueue.AddAchievementToQueue(ach);
     }
 
     private void OnLevelComplete(object sender, object info)
@@ -75,6 +104,9 @@ public class AchievementManager : MonoBehaviour
             for (int i = 0; i < AchievementDefinitions.CATEGORY_COMPLETE_ACHIEVEMENTS.Count; i++)
             {
                 ACH_CategoryComplete ach = AchievementDefinitions.CATEGORY_COMPLETE_ACHIEVEMENTS[i];
+
+                if (GameManager.instance.SaveData.IsAchievementUnlocked(ach))
+                    continue;
 
                 if (levelCompleted.Category == ach.Category)
                     if (ach.CheckUnlock())

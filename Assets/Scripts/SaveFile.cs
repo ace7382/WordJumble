@@ -16,6 +16,8 @@ public class SaveFile
 
     public Dictionary<string, int>                                  FoundWords;
 
+    public List<int>                                                AchievementsUnlocked;
+
     public SaveFile()
     {
         LevelProgress           = new Dictionary<LevelCategory, Dictionary<int, List<bool>>>();
@@ -24,6 +26,7 @@ public class SaveFile
         CompletedDailyPuzzles   = new List<string>();
         DailyPuzzleDate         = new DateTime(1900, 01, 01);
         FoundWords              = new Dictionary<string, int>();
+        AchievementsUnlocked    = new List<int>();
 
         Dictionary<int, List<bool>> final = new Dictionary<int, List<bool>>();
         Dictionary<int, bool> secretFinal = new Dictionary<int, bool>();
@@ -143,8 +146,8 @@ public class SaveFile
     }
 
     public bool IsAchievementUnlocked(Achievement achievement)
-    { 
-        return false;
+    {
+        return AchievementsUnlocked.Contains(achievement.ID);
     }
 
     public bool IsWordInFoundWordsList(string word)
