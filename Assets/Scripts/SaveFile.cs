@@ -63,7 +63,10 @@ public class SaveFile
 
     public bool IsLevelFullyComplete(NewLevel level)
     {
-        return IsLevelComplete(level) && IsSecretWordFound(level);
+        if (level.HasSecretWord)
+            return IsLevelComplete(level) && IsSecretWordFound(level);
+        else
+            return IsLevelComplete(level);
     }
 
     public bool IsWordFound(NewLevel level, int wordIndex)

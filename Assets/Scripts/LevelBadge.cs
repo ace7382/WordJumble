@@ -65,7 +65,7 @@ public class LevelBadge
             .text                       = level.LevelNumber.ToString();
 
         root.Q<Label>(UIManager.LEVEL_SELECT_BADGE__THEME_NAME)
-            .text                       = level.Theme;
+            .text                       = (level.Category == LevelCategory.DAILY ? "" : $"{level.LevelNumber} - ") + level.Theme;
 
         for (int i = 1; i <= MAX_BADGE_NUM; i++)
         {

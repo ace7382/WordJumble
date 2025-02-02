@@ -10,6 +10,7 @@ public class LevelSelectPage : Page
 
     private bool                canClick;
     private bool                showCompleted           = true;
+    private bool                showSecretFound         = true;
 
     private LevelCategory       levelCat;
     private List<NewLevel>      levels;
@@ -21,8 +22,10 @@ public class LevelSelectPage : Page
     private Label               secretCounter;
     private VisualElement       backButton;
     private Label               hideCompletedButton;
+    private Label               hideSecretFoundButton;
     private VisualElement       gridButton;
     private VisualElement       listButton;
+    private Label               allCompleteMessage;
 
     #endregion
 
@@ -66,18 +69,20 @@ public class LevelSelectPage : Page
 
     private void SetupUI()
     {
-        badges              = new List<LevelBadge>();
+        badges                  = new List<LevelBadge>();
 
-        titleLabel          = uiDoc.rootVisualElement.Q<Label>(UIManager.LEVEL_SELECT_PAGE__TITLE_NAME);
-        levelIconContainer  = uiDoc.rootVisualElement.Q<ScrollView>(UIManager.LEVEL_SELECT_PAGE__ICON_CONTAINER_NAME).contentContainer;
-        completeCounter     = uiDoc.rootVisualElement.Q<Label>(UIManager.LEVEL_SELECT_PAGE__COMPLETE_COUNTER_NAME);
-        secretCounter       = uiDoc.rootVisualElement.Q<Label>(UIManager.LEVEL_SELECT_PAGE__SECRET_COUNTER_NAME);
-        backButton          = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.LEVEL_SELECT_PAGE__BACK_BUTTON_NAME);
-        hideCompletedButton = uiDoc.rootVisualElement.Q<Label>(UIManager.LEVEL_SELECT_PAGE__HIDE_COMP_BUTTON_NAME);
-        gridButton          = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.LEVEL_SELECT_PAGE__GRID_BUTTON_NAME);
-        listButton          = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.LEVEL_SELECT_PAGE__LIST_BUTTON_NAME);
+        titleLabel              = uiDoc.rootVisualElement.Q<Label>(UIManager.LEVEL_SELECT_PAGE__TITLE_NAME);
+        levelIconContainer      = uiDoc.rootVisualElement.Q<ScrollView>(UIManager.LEVEL_SELECT_PAGE__ICON_CONTAINER_NAME).contentContainer;
+        completeCounter         = uiDoc.rootVisualElement.Q<Label>(UIManager.LEVEL_SELECT_PAGE__COMPLETE_COUNTER_NAME);
+        secretCounter           = uiDoc.rootVisualElement.Q<Label>(UIManager.LEVEL_SELECT_PAGE__SECRET_COUNTER_NAME);
+        backButton              = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.LEVEL_SELECT_PAGE__BACK_BUTTON_NAME);
+        hideCompletedButton     = uiDoc.rootVisualElement.Q<Label>(UIManager.LEVEL_SELECT_PAGE__HIDE_COMP_BUTTON_NAME);
+        hideSecretFoundButton   = uiDoc.rootVisualElement.Q<Label>(UIManager.LEVEL_SELECT_PAGE__HIDE_SECRET_BUTTON_NAME);
+        gridButton              = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.LEVEL_SELECT_PAGE__GRID_BUTTON_NAME);
+        listButton              = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.LEVEL_SELECT_PAGE__LIST_BUTTON_NAME);
+        allCompleteMessage      = uiDoc.rootVisualElement.Q<Label>(UIManager.LEVEL_SELECT_PAGE__ALL_COMPLETE_TEXT_NAME);
 
-        titleLabel.text     = levelCat.Name();
+        titleLabel.text         = levelCat.Name();
 
         levelIconContainer.style
             .justifyContent = Justify.SpaceAround;
@@ -85,6 +90,7 @@ public class LevelSelectPage : Page
         SwitchLevelBadgeDisplayMode();
 
         int completeCount   = 0;
+        int levsWithSecret  = 0;
         int secretCount     = 0;
 
         foreach (NewLevel level in levels)
@@ -96,34 +102,62 @@ public class LevelSelectPage : Page
                                             LoadLevel(null, level);
                                         };
 
+            levelBadge.userData         = level;
+
             controller.RegisterOnClick(onClick);
             levelIconContainer.Add(levelBadge);
 
             if (GameManager.instance.SaveData.IsLevelComplete(level))
                 completeCount++;
 
-            if (GameManager.instance.SaveData.IsSecretWordFound(level))
-                secretCount++;
+            if (level.HasSecretWord)
+            {
+                levsWithSecret++;
+
+                if (GameManager.instance.SaveData.IsSecretWordFound(level))
+                    secretCount++;
+            }
 
             completeCounter.text        = completeCount.ToString() + " / " + levels.Count.ToString();
-            secretCounter.text          = secretCount.ToString() + " / " + levels.Count.ToString();
+            secretCounter.text = secretCount.ToString() + " / " + levsWithSecret.ToString();
 
             badges.Add(controller);
         }
-
-        QuickButton gridControl = new QuickButton(gridButton, Color.black);
-        QuickButton listControl = new QuickButton(listButton, Color.black);
-        gridButton.AddManipulator(gridControl);
-        listButton.AddManipulator(listControl);
     }
 
     private void RegisterCallbacksAndEvents()
     {
-        backButton.RegisterCallback<ClickEvent>((_) => ReturnToMainMenu());
-        hideCompletedButton.RegisterCallback<ClickEvent>((_) => ShowHideCompleted());
+        QuickButton backQB      = new QuickButton(backButton, Color.black);
+        QuickButton hideQB      = new QuickButton(hideCompletedButton, Color.black);
+        QuickButton hideSecQB   = new QuickButton(hideSecretFoundButton, Color.black);
+        QuickButton gridControl = new QuickButton(gridButton, Color.black);
+        QuickButton listControl = new QuickButton(listButton, Color.black);
 
-        backButton.RegisterButtonStateVisualChanges(backButton, Color.black, false, Color.white);
-        hideCompletedButton.RegisterButtonStateVisualChanges(hideCompletedButton, Color.black, false, Color.white);
+        backButton.AddManipulator(backQB);
+        hideCompletedButton.AddManipulator(hideQB);
+        hideSecretFoundButton.AddManipulator(hideSecQB);
+        gridButton.AddManipulator(gridControl);
+        listButton.AddManipulator(listControl);
+
+        backButton.RegisterCallback<ClickEvent>((_) => ReturnToMainMenu());
+
+        hideCompletedButton.RegisterCallback<ClickEvent>((_) => {
+            if (!canClick)
+                return;
+
+            showCompleted = !showCompleted;
+
+            ShowHideLevelButtons();
+        });
+
+        hideSecretFoundButton.RegisterCallback<ClickEvent>((_) => {
+            if (!canClick)
+                return;
+
+            showSecretFound = !showSecretFound;
+
+            ShowHideLevelButtons();
+        });
 
         gridButton.RegisterCallback<ClickEvent>(_ => SwitchLevelBadgeDisplayMode());
         listButton.RegisterCallback<ClickEvent>(_ => SwitchLevelBadgeDisplayMode());
@@ -168,6 +202,9 @@ public class LevelSelectPage : Page
 
         foreach (VisualElement child in levelIconContainer.Children())
         {
+            if (child == allCompleteMessage)
+                continue;
+
             NewLevel lev        = (NewLevel)child.userData;
             bool completed      = GameManager.instance.SaveData.IsLevelComplete(lev);
 
@@ -176,6 +213,61 @@ public class LevelSelectPage : Page
 
         hideCompletedButton.text = showCompleted ? "Hide Completed" : "Show Completed";
     }
+
+    private void ShowHideLevelButtons()
+    {
+        //TODO: Remove both hide buttons, and just make a "Hide Fully Completed" button
+
+        if (!canClick)
+            return;
+
+        //Hide completed    = hide all complete levels, regardless of secret
+        //Hide secret       = hide all levels without a secret, or w secret found
+        //
+        //button.Show(
+        //  (showCompleted || completed == showCompleted) &&
+        //  (showSecret || showSecret == level.hasSecret || showSecret == secretFound)
+        //)
+
+        bool showAllComplete        = true;
+
+        foreach (VisualElement child in levelIconContainer.Children())
+        {
+            if (child == allCompleteMessage)
+                continue;
+
+            NewLevel level          = (NewLevel)child.userData;
+            bool completed          = GameManager.instance.SaveData.IsLevelComplete(level);
+
+            //child.Show(
+            //    (showCompleted || completed == showCompleted)
+            //    &&  showSecretFound
+            //        || showSecretFound == lev.HasSecretWord
+            //        || showSecretFound == GameManager.instance.SaveData.IsSecretWordFound(lev)
+            //    );
+
+            if (showCompleted && showSecretFound)
+                child.Show();
+            else if (showCompleted && !showSecretFound)
+                if (level.HasSecretWord)
+                    child.Show(!GameManager.instance.SaveData.IsSecretWordFound(level));
+                else
+                    child.Hide();
+            else if (!showCompleted && showSecretFound)
+                child.Show(!completed);
+            else //Hide completed, hide secret found
+                child.Show(!GameManager.instance.SaveData.IsLevelFullyComplete(level));
+
+            if (child.IsShowing())
+                showAllComplete     = false;
+        }
+
+        allCompleteMessage.Show(showAllComplete);
+
+        hideCompletedButton.text    = showCompleted ? "Hide Completed" : "Show Completed";
+        hideSecretFoundButton.text  = showSecretFound ? "Hide Secret Found" : "Show Secret Found";
+    }
+
 
     private void SwitchLevelBadgeDisplayMode()
     {

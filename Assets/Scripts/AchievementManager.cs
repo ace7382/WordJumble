@@ -52,7 +52,7 @@ public class AchievementManager : MonoBehaviour
     {
         if (achTest)
         {
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < AchievementDefinitions.ALL_ACHIEVEMENTS.Count; i++)
             {
                 UnlockAchievement(AchievementDefinitions.ALL_ACHIEVEMENTS[i]);
             }

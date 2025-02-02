@@ -220,11 +220,17 @@ public class GamePage : Page
         shuffleButton.RegisterCallback<ClickEvent>((_) => Shuffle());
         hideFoundButton.RegisterCallback<ClickEvent>((_) => ShowHideFoundTiles());
 
-        exitButton.RegisterButtonStateVisualChanges(exitButton, Color.black, true, Color.white);
-        submitButton.RegisterButtonStateVisualChanges(submitButton, Color.black, true, Color.white);
-        clearButton.RegisterButtonStateVisualChanges(clearButton, Color.black, true, Color.white);
-        shuffleButton.RegisterButtonStateVisualChanges(shuffleButton, Color.black, true, Color.white);
-        hideFoundButton.RegisterButtonStateVisualChanges(hideFoundButton, Color.black, true, Color.white);
+        QuickButton exitQB      = new QuickButton(exitButton, Color.black);
+        QuickButton submitQB    = new QuickButton(submitButton, Color.black);
+        QuickButton clearQB     = new QuickButton(clearButton, Color.black);
+        QuickButton shuffleQB   = new QuickButton(shuffleButton, Color.black);
+        QuickButton hideQB      = new QuickButton(hideFoundButton, Color.black);
+
+        exitButton.AddManipulator(exitQB);
+        submitButton.AddManipulator(submitQB);
+        clearButton.AddManipulator(clearQB);
+        shuffleButton.AddManipulator(shuffleQB);
+        hideFoundButton.AddManipulator(hideQB);
 
         Shuffle();
     }

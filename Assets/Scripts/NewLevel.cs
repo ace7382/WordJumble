@@ -66,9 +66,9 @@ public static class LevelDefinitions
         new NewLevel(LevelCategory.BEGINNER, "Test2", 1, new List<string>() { "xx", "yyy", "zzzz", "adam" }, "Yam"),
 
         new NewLevel(LevelCategory.ORIGINAL, "Ocean", 1, new List<string>() { "Crab", "Beach", "Dolphin", "Seahorse" }, "Sea"),
-        new NewLevel(LevelCategory.ORIGINAL, "Forest", 2, new List<string>() { "Bear", "Trail", "Hiking", "Campfire" }, "Abc"),
-        new NewLevel(LevelCategory.ORIGINAL, "Desert", 3, new List<string>() { "Sand", "Snake", "Cactus", "Drought" }, "Abc"),
-        new NewLevel(LevelCategory.ORIGINAL, "Weather", 4, new List<string>() { "Wind", "Cloud", "Sunny", "Drizzle" }, "Abc"),
+        new NewLevel(LevelCategory.ORIGINAL, "Forest", 2, new List<string>() { "Bear", "Trail", "Hiking", "Campfire" }, ""),
+        new NewLevel(LevelCategory.ORIGINAL, "Desert", 3, new List<string>() { "Sand", "Snake", "Cactus", "Drought" }, ""),
+        new NewLevel(LevelCategory.ORIGINAL, "Weather", 4, new List<string>() { "Wind", "Cloud", "Sunny", "Drizzle" }, ""),
         new NewLevel(LevelCategory.ORIGINAL, "School", 5, new List<string>() { "Exam", "Friend", "Library", "Homework" }, "Abc"),
         new NewLevel(LevelCategory.ORIGINAL, "Music", 6, new List<string>() { "Bass", "Tempo", "Violin", "Trombone" }, "Abc"),
         new NewLevel(LevelCategory.ORIGINAL, "Sports", 7, new List<string>() { "Puck", "Track", "Lacrosse", "Football" }, "Abc"),

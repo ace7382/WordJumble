@@ -11,6 +11,7 @@ public class AchievementsPage : Page
 
     private Label           completeCounter;
     private Label           hideCompletedButton;
+    private Label           allCompleteMessage;
 
     private VisualElement   backButton;
     private VisualElement   cardContainer;
@@ -55,6 +56,7 @@ public class AchievementsPage : Page
         backButton                  = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.ACHIEVE_PAGE__BACK_BUTTON_NAME);
         hideCompletedButton         = uiDoc.rootVisualElement.Q<Label>(UIManager.ACHIEVE_PAGE__HIDE_COMP_BUTTON_NAME);
         cardContainer               = uiDoc.rootVisualElement.Q<VisualElement>(UIManager.ACHIEVE_PAGE__CARD_CONTAINER_NAME);
+        allCompleteMessage          = uiDoc.rootVisualElement.Q<Label>(UIManager.ACHIEVE_PAGE__ALL_COMPLETE_TEXT_NAME);
 
         List<Achievement> achs      = AchievementDefinitions.ALL_ACHIEVEMENTS;
 
@@ -104,16 +106,27 @@ public class AchievementsPage : Page
         if (!canClick)
             return;
 
-        showCompleted = !showCompleted;
+        showCompleted       = !showCompleted;
+
+        bool showAllEarned  = !showCompleted;
 
         foreach (VisualElement child in cardContainer.Children())
         {
+            if (child == allCompleteMessage)
+                continue;
+
             Achievement ach = (Achievement)child.userData;
 
             child.Show(showCompleted || ach.IsUnlocked == showCompleted);
+
+            Debug.Log($"Ach {ach.ID} is showing {child.IsShowing()}");
+            if (child.IsShowing())
+                showAllEarned = false;
         }
 
         hideCompletedButton.text = showCompleted ? "Hide Completed" : "Show Completed";
+
+        allCompleteMessage.Show(showAllEarned);
     }
 
     #endregion

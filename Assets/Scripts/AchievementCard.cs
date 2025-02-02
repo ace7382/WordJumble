@@ -39,10 +39,14 @@ public class AchievementCard
         title.text              = achievement.Name;
         description.text        = achievement.GetDescription();
 
-        if (GameManager.instance.SaveData.IsAchievementUnlocked(achievement) && !isToastCard)
+        bool unlocked           = GameManager.instance.SaveData.IsAchievementUnlocked(achievement);
+
+        if (unlocked && !isToastCard)
         {
-            barLabel.text       = "Achievement Unlocked!";
+            barLabel.text = "Achievement Unlocked!";
             barFill.style.width = new StyleLength(new Length(100f, LengthUnit.Percent));
+            root.ElementAt(0).SetBorderColor(Color.black);
+            root.ElementAt(0).SetBorderWidth(8f);
         }
         else
         {
